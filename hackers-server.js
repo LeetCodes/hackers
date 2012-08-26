@@ -6,14 +6,7 @@
  * Copyright (c) 2010-2012 Robin Ruaux
  * Licensed under the new BSD license.
  */
-/*
- * hackers-server.js
- *
- * https://github.com/robinouu/hackers
- *
- * Copyright (c) 2010-2012 Robin Ruaux
- * Licensed under the new BSD license.
- */
+
 var util = require("util"), color = require('colors');
 var fs = require("fs"), readline = require("readline"), net = require('net');
 var rl = readline.createInterface(process.stdin, process.stdout);

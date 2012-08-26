@@ -1,0 +1,42 @@
+{
+	"name": "hackers",
+	"version": "0.0.1",
+	"description": "A MUD server and a client for a roleplay game in a futurist world",
+	"homepage" : "https://github.com/robinouu/hackers",
+	"keywords": ["mud server", "mud client", "rpg", "game"],
+
+	"author":
+	{
+		"name": "Robin Ruaux",
+		"email": "robinouu@gmail.com",
+		"url": "http://robin-ruaux.info"
+	},
+	
+	"licenses":
+	[
+		{
+			"type": "BSD",
+			"url": "https://github.com/robinouu/hackers/raw/master/LICENSE"
+		}
+	],
+	
+	"repository":
+	{
+		"type": "git",
+		"url": "http://github.com/robinouu/hackers.git"
+	},
+	
+	"dependencies":
+	{
+		"colors" : "*",
+		"wormhole" : "*",
+		"commander" : "*"
+	},
+	
+	"engines":
+	{
+		"node": ">= 0.4.0"
+	},
+	
+	"main": "./hackers-server.js"
+}
