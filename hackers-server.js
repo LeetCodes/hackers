@@ -40,29 +40,30 @@ var clients = [];
 
 var server = net.createServer({ allowHalfOpen: true}, function (stream)
 {
-	var client = new Client(stream);
-	clients.push(client);
-
 	stream.setEncoding("utf8");
 
-	wormhole(client.stream, 'hall', function (data)
+	wormhole(stream, 'hall', function (data)
 	{
         if (data.id === 'login' && typeof data.username === 'string')
 		{
-           client.stream.write('hall', {id : 'login-success', msg : 'You are now logged on the server !'});
+           stream.write('hall', {id : 'login-success', msg : 'You are now logged on the server !'});
         }
-
     });
 	
-	wormhole(client.stream, 'connect', function ()
+	stream.on('connect', function()
 	{
-		client.stream.write("Welcome, enter your username:\n");
+		var client = new Client(stream);
+		clients.push(client);
+
+		util.log('New client connected (' + stream.remoteAddress + ')');
+		
+		stream.write('hall',
+		{
+			id : 'welcome',
+			msg : "Welcome to the " + "HACKERS SERVER".cyan.bold + " (" + program.version() + ")\n\nType " + "[help]".bold.green + " for available commands"
+		});
 	});
-	
-	wormhole(client.stream, 'error', function (e)
-	{
-		util.debug(e);
-	});
+
 });
 
 util.log("Type " + "[start]".bold.green + " to launch the server");
