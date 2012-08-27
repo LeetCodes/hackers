@@ -20,8 +20,8 @@ var util = require('util'),
 /* Program variables */
 program
 	.version('0.0.1')
-	.option('-p, --port <port>', 'The port to listen for sockets connections.', parseInt)
-	.option('-r, --retryInterval <milliseconds>', 'The number of milliseconds before restarting connexion when an error occurs.', parseInt)
+	.option('-p, --port <port>', 'the port to listen for sockets connections', parseInt)
+	.option('-r, --retryInterval <milliseconds>', 'The number of milliseconds before restarting connection when an error occurs', parseInt)
 	.parse(process.argv);
   
 if (typeof program.port !== 'number' || program.port < 0)
