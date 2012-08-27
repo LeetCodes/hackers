@@ -14,8 +14,10 @@ var rl = readline.createInterface(process.stdin, process.stdout);
 var wormhole = require("wormhole");
 var program = require("commander");
 
+var pack = require("./package.json");
+
 program
-  .version('0.0.1')
+  .version(pack.version)
   .option('-n, --host [hostname]', 'The host to connect to. "localhost" by default.')
   .option('-p, --port <n>', 'The host\'s port to connect to. 8081 by default.', parseInt)
   .parse(process.argv);

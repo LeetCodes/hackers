@@ -17,9 +17,11 @@ var util = require('util'),
 	CommandList = require("./lib/CommandList.js"),
 	Command = require("./lib/Command.js");
 
+var pack = require("./package.json");
+
 /* Program variables */
 program
-	.version('0.0.1')
+	.version(pack.version)
 	.option('-p, --port <port>', 'the port to listen for sockets connections', parseInt)
 	.option('-r, --retryInterval <milliseconds>', 'The number of milliseconds before restarting connection when an error occurs', parseInt)
 	.parse(process.argv);
