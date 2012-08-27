@@ -14,9 +14,9 @@ var util = require('util'),
 	program = require("commander"),	
 	
 	Server = require("./lib/Server.js"),
-	CommandList = require("./lib/CommandList.js"),
-	Command = require("./lib/Command.js");
-
+	Command = require("./lib/Command.js"),
+	CLI = require("./lib/CLI.js");
+	
 var pack = require("./package.json");
 
 /* Program variables */
@@ -36,7 +36,7 @@ var server = new Server();
 
 server.on('clientConnected', function(client)
 {
-	util.log('New client connected (' + client.stream.remoteAddress + ')');
+	util.log(client.stream.remoteAddress.bold.green + ' client connected.');
 	
 	/* Write in the hall channel of the client a welcome message */
 	client.stream.write('hall',
@@ -46,33 +46,43 @@ server.on('clientConnected', function(client)
 	});
 });
 
-server.on('started', function()
+server.on('started', function(port)
 {
-	util.log("Server started on port " + program.port.toString().bold.green);
-	cmdList.prompt();
+	util.log("Server started on port " + port.toString().bold.green);
+	cli.prompt();
 });
 
 server.on('stopped', function()
 {
 	util.log("Server stopped.");
-	cmdList.prompt();
+	cli.prompt();
 });
 
 /* Create a CLI */
-var cmdList = new CommandList();
-var cmdStart = new Command("start", /^start$/, function ()
+var cli = new CLI();
+
+var cmdStart = new Command('^start([" "](?<port> [0-9]+))?', "start the server on the specified port", function (data)
 {
-	server.start(program.port);
+	server.start(parseInt(data.port) || program.port);
 });
 
-var cmdStop = new Command("stop", /^stop$/, function ()
+var cmdStop = new Command("^stop", "stop the server", function ()
 {
 	server.stop();
 });
 
+var cmdClients = new Command("clients", "get the number of clients sockets currently connected", function ()
+{
+	util.log(server.clients.length.toString().bold.green + ' clients connected');
+});
+
+var cmdExit = new Command("^exit", "exit the server program", function ()
+{
+	util.log("Program exiting...");
+	process.exit(0);
+});
 /* Register commands */
-cmdList.register(cmdStart);
-cmdList.register(cmdStop);
+cli.register([cmdStart, cmdStop, cmdClients, cmdExit]);
 
 /* Process error handler */
 process.on('uncaughtException', function(e)
@@ -88,10 +98,10 @@ process.on('uncaughtException', function(e)
 	}
 	else
 	{
-		util.debug(e);
-		cmdList.prompt();
+		util.debug(e.toString().bold.red);
+		cli.prompt();
 	}
 });
 
 
-cmdList.prompt();
+cli.prompt();
