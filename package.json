@@ -31,7 +31,8 @@
 	{
 		"colors" : "*",
 		"wormhole" : "*",
-		"commander" : "*",
+		"prompt" : "*",
+		"optimist" : "*",
 		"xregexp" : "*"
 	},
 	

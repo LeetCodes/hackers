@@ -11,7 +11,7 @@
 
 var util = require('util'),
 	color = require("colors"),
-	program = require("commander"),	
+	optimist = require('optimist'),
 	
 	Server = require("./lib/Server.js"),
 	Command = require("./lib/Command.js"),
@@ -20,25 +20,35 @@ var util = require('util'),
 var pack = require("./package.json");
 
 /* Program variables */
-program
-	.version(pack.version)
-	.option('-p, --port <port>', 'the port to listen for sockets connections', parseInt)
-	.option('-r, --retryInterval <milliseconds>', 'The number of milliseconds before restarting connection when an error occurs', parseInt)
-	.parse(process.argv);
-  
-if (typeof program.port !== 'number' || program.port < 0)
-	program.port = 8081;
-if (typeof program.retryInterval !== 'number' || program.retryInterval < 0)
-	program.retryInterval = 2000;	
+var argv = optimist.usage(('MUD server - CLI version ' + pack.version).green,
+{
+  'port': {
+    description: 'the port to listen for sockets connections'.cyan.bold,
+    short: 'p',
+	default: 8081
+  },
+  'retryInterval': {
+    description: 'the number of milliseconds before restarting a connection'.cyan.bold,
+    short: 'r',
+	default: 2000
+  },
+  'help': {
+	description: 'show usages of the CLI server tool'.cyan.bold,
+	short: 'h'
+  }
+}).argv;
 
-/* Create the server */
+util.log(optimist.help().toString().bold);
+
+
+// Create the server
 var server = new Server();
 
 server.on('clientConnected', function(client)
 {
-	util.log(client.stream.remoteAddress.bold.green + ' client connected.');
+	console.log(client.stream.remoteAddress.bold.green + ' client connected.');
 	
-	/* Write in the hall channel of the client a welcome message */
+	// Write in the hall channel of the client a welcome message
 	client.stream.write('hall',
 	{
 		id : 'welcome',
@@ -48,41 +58,47 @@ server.on('clientConnected', function(client)
 
 server.on('started', function(port)
 {
-	util.log("Server started on port " + port.toString().bold.green);
-	cli.prompt();
+	console.log("Server started on port " + port.toString().bold.green);
+	cli.getCommand();
 });
 
 server.on('stopped', function()
 {
-	util.log("Server stopped.");
-	cli.prompt();
+	console.log("Server stopped.");
+	cli.getCommand();
 });
 
-/* Create a CLI */
+// Create a CLI
 var cli = new CLI();
 
-var cmdStart = new Command('^start([" "](?<port> [0-9]+))?', "start the server on the specified port", function (data)
+var cmdStart = new Command("start <port>", "start the server on the specified port", '^start([" "](?<port> [0-9]+))?', function (data)
 {
-	server.start(parseInt(data.port) || program.port);
+	server.start(parseInt(data.port) || argv.port);
 });
 
-var cmdStop = new Command("^stop", "stop the server", function ()
+var cmdStop = new Command("stop", "stop the server", '^stop', function ()
 {
 	server.stop();
 });
 
-var cmdClients = new Command("clients", "get the number of clients sockets currently connected", function ()
+var cmdClients = new Command("clients", "get the number of clients sockets currently connected", '^clients', function ()
 {
 	util.log(server.clients.length.toString().bold.green + ' clients connected');
 });
 
-var cmdExit = new Command("^exit", "exit the server program", function ()
+var cmdHelp = new Command("help", "display the commands usage", '^help', function ()
+{
+	util.log('\nUsage:\n' + cli.usage());
+});
+
+var cmdExit = new Command("exit", "exit the server program", '^exit', function ()
 {
 	util.log("Program exiting...");
 	process.exit(0);
 });
+
 /* Register commands */
-cli.register([cmdStart, cmdStop, cmdClients, cmdExit]);
+cli.register([cmdStart, cmdStop, cmdClients, cmdHelp, cmdExit]);
 
 /* Process error handler */
 process.on('uncaughtException', function(e)
@@ -93,15 +109,13 @@ process.on('uncaughtException', function(e)
 		setTimeout(function ()
 		{
 			console.log('Address in use, retrying...');
-			server.start(program.port);
-		}, program.retryInterval);
+			server.start(argv.port);
+		}, argv.retryInterval);
 	}
 	else
 	{
 		util.debug(e.toString().bold.red);
-		cli.prompt();
+		cli.getCommand();
 	}
 });
-
-
-cli.prompt();
+cli.getCommand();
