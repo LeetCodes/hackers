@@ -27,4 +27,11 @@ hackers is distributed under the [BSD licence](https://github.com/robinouu/hacke
 
 ## Thanks to ! ##
 
-hackers depends on [commander](https://npmjs.org/package/commander), [wormhole](https://npmjs.org/package/wormhole), and [colors](https://npmjs.org/package/colors) node.js modules, thanks to their respective authors for providing great tools !
+hackers depends on the following libraries :
+  - [prompt](https://github.com/flatiron/prompt)
+  - [wormhole](https://npmjs.org/package/wormhole)
+  - [colors](https://npmjs.org/package/colors)
+  - [optimist](https://github.com/substack/node-optimist)
+  - [xregexp](https://github.com/slevithan/xregexp)
+  
+Thanks to their respective authors for providing such a great tools !
