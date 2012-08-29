@@ -7,20 +7,42 @@ Using npm package manager :
 
 	npm install hackers
 	
-## Usage ##
+## Launch the server ##
 hackers comes with a server program that you can launch using :
 
 	node hackers-server.js
 	
-## Options ##
-
-	-h, --help			output usage information
-	-V, --version		output the version number
-	-p, --port <port>   the port to listen for sockets connections
-	-r, --retryInterval <milliseconds>	the number of milliseconds before restarting connection when an error occurs
+#### Start the server ####
 	
-By default, the server will listen to port **8081** and will retry a connection every **2 seconds**.
+	> start
+	You can also specify a port (**4000** by default) :
+	> start 8081
+	
+#### Stop the server ####
 
+	> stop
+
+#### Display the number of connected clients ####
+
+	> clients
+	
+#### Display the help ####
+
+	> help
+
+#### Quit the program ####
+
+	> exit
+	
+## Launch the client ##
+
+The client uses terminal commands like on the server tool :
+
+	> connect (port)
+	> disconnect
+	> help	
+	> exit
+	
 ## Licence ##
 
 hackers is distributed under the [BSD licence](https://github.com/robinouu/hackers/blob/master/LICENSE).
@@ -28,10 +50,8 @@ hackers is distributed under the [BSD licence](https://github.com/robinouu/hacke
 ## Thanks to ! ##
 
 hackers depends on the following libraries :
-  - [prompt](https://github.com/flatiron/prompt)
-  - [wormhole](https://npmjs.org/package/wormhole)
   - [colors](https://npmjs.org/package/colors)
-  - [optimist](https://github.com/substack/node-optimist)
+  - [wormhole](https://npmjs.org/package/wormhole)
   - [xregexp](https://github.com/slevithan/xregexp)
   
 Thanks to their respective authors for providing such a great tools !
