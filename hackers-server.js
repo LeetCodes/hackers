@@ -11,39 +11,16 @@
 
 var util = require('util'),
 	color = require("colors"),
-	optimist = require('optimist'),
 	
 	Server = require("./lib/Server.js"),
-	Command = require("./lib/Command.js"),
 	CLI = require("./lib/CLI.js");
 	
 var pack = require("./package.json");
 
-/* Program variables */
-var argv = optimist.usage(('MUD server - CLI version ' + pack.version).green,
-{
-  'port': {
-    description: 'the port to listen for sockets connections'.cyan.bold,
-    short: 'p',
-	default: 8081
-  },
-  'retryInterval': {
-    description: 'the number of milliseconds before restarting a connection'.cyan.bold,
-    short: 'r',
-	default: 2000
-  },
-  'help': {
-	description: 'show usages of the CLI server tool'.cyan.bold,
-	short: 'h'
-  }
-}).argv;
-
-util.log(optimist.help().toString().bold);
-
 
 // Create the server
 var server = new Server();
-
+var port = 8081;
 server.on('clientConnected', function(client)
 {
 	console.log(client.stream.remoteAddress.bold.green + ' client connected.');
@@ -52,53 +29,71 @@ server.on('clientConnected', function(client)
 	client.stream.write('hall',
 	{
 		id : 'welcome',
-		msg : "Welcome to the " + "HACKERS SERVER".cyan.bold + " (" + program.version() + ")\n\nType " + "[help]".bold.green + " for available commands"
+		msg : "Welcome to the " + "HACKERS SERVER".cyan.bold + " (" + pack.version + ")\n\nType " + "[help]".bold.green + " for available commands"
 	});
 });
 
-server.on('started', function(port)
+server.on('started', function(p)
 {
-	console.log("Server started on port " + port.toString().bold.green);
-	cli.getCommand();
+	util.log("Server started on port " + p.toString().bold.green);
+	cli.prompt();
 });
 
 server.on('stopped', function()
 {
 	console.log("Server stopped.");
-	cli.getCommand();
+	cli.prompt();
 });
 
 // Create a CLI
 var cli = new CLI();
 
-var cmdStart = new Command("start <port>", "start the server on the specified port", '^start([" "](?<port> [0-9]+))?', function (data)
-{
-	server.start(parseInt(data.port) || argv.port);
-});
-
-var cmdStop = new Command("stop", "stop the server", '^stop', function ()
-{
-	server.stop();
-});
-
-var cmdClients = new Command("clients", "get the number of clients sockets currently connected", '^clients', function ()
-{
-	util.log(server.clients.length.toString().bold.green + ' clients connected');
-});
-
-var cmdHelp = new Command("help", "display the commands usage", '^help', function ()
-{
-	util.log('\nUsage:\n' + cli.usage());
-});
-
-var cmdExit = new Command("exit", "exit the server program", '^exit', function ()
-{
-	util.log("Program exiting...");
-	process.exit(0);
-});
-
 /* Register commands */
-cli.register([cmdStart, cmdStop, cmdClients, cmdHelp, cmdExit]);
+cli.registerCommands([
+{
+	cmd: 'start *(?<port>[0-9]+)?',
+	callback: function(data)
+	{
+		port = data.port ? data.port : port;
+		server.start(port);
+	},
+},
+{
+	cmd: "stop",
+	callback: function(data)
+	{
+		server.stop();
+	}
+},
+{
+	cmd: "clients",
+	callback: function()
+	{
+		util.log(server.clients.length ? server.clients.length.toString().bold.green + ' clients connected' : 'no client connected');
+	}
+},
+{
+	cmd: "help",
+	callback: function(data)
+	{
+		util.log('\nUsage:\n' + cli.usage());
+	}
+},
+{
+	cmd: "exit",
+	callback: function(data)
+	{
+		cli.readline.close();
+	}
+}]);
+
+cli.readline.on('close', function()
+{
+	util.log("Program is exiting...");
+	
+	process.exit(0);
+	process.stdin.destroy();
+});
 
 /* Process error handler */
 process.on('uncaughtException', function(e)
@@ -109,13 +104,14 @@ process.on('uncaughtException', function(e)
 		setTimeout(function ()
 		{
 			console.log('Address in use, retrying...');
-			server.start(argv.port);
-		}, argv.retryInterval);
+			server.start(port);
+		}, 1000);
 	}
 	else
 	{
 		util.debug(e.toString().bold.red);
-		cli.getCommand();
+		cli.prompt();
 	}
 });
-cli.getCommand();
+
+cli.prompt();

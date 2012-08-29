@@ -6,57 +6,63 @@
  * Copyright (c) 2010-2012 Robin Ruaux
  * Licensed under the new BSD license.
  */
-var util = require("util"), color = require('colors');
-var fs = require("fs"), readline = require("readline"), net = require('net');
+var util = require("util"),
+	color = require('colors'),
+	fs = require("fs"),
+	net = require('net'),
+	wormhole = require("wormhole"),
+	CLI = require("./lib/CLI.js"),
+	pack = require("./package.json");
 
-var rl = readline.createInterface(process.stdin, process.stdout);
+/* Program variables */
 
-var wormhole = require("wormhole");
-var program = require("commander");
 
-var pack = require("./package.json");
+// Create a CLI
+var cli = new CLI();
+var client;
 
-program
-  .version(pack.version)
-  .option('-n, --host [hostname]', 'The host to connect to. "localhost" by default.')
-  .option('-p, --port <n>', 'The host\'s port to connect to. 8081 by default.', parseInt)
-  .parse(process.argv);
-  
-if (typeof program.host !== 'string')
-	program.host = 'localhost';
-if (typeof program.port !== 'number' || program.port < 0)
-	program.port = 8081;
-
-util.log('Connecting to ' + (program.host + ':' + program.port).bold.green + '...');
-
-var client = net.connect(program.port, program.host, function()
+/* Register commands */
+cli.registerCommands([
 {
-	util.log('Connected !');
-	
-	wormhole(client, 'hall', function (data)
+	cmd: 'connect *(?<port>[0-9]+)?',
+	callback: function(data)
 	{
-		if (typeof data.msg !== 'undefined')
-			util.log(data.msg);
-    });
-});
+		var p = data.port ? data.port : 8081;
+		util.log('Connecting to port ' + p);
 
-
-var logged = false;
-var currentChannel = 'hall';
-
-rl.on('line', function (line)
+		client = net.connect(p, 'localhost', function()
+		{
+			util.log('Connected !');
+			
+			wormhole(client, 'hall', function (data)
+			{
+				if (typeof data.msg !== 'undefined')
+					util.log(data.msg);
+			});
+		});
+	},
+},
 {
-	cmd = line.toLowerCase();
-	
-	if (cmd == "help")
+	cmd: "help",
+	callback: function(data)
 	{
-		
+		util.log('\nUsage:\n' + cli.usage());
 	}
-	
-}).on('close', function()
+},
+{
+	cmd: "exit",
+	callback: function(data)
+	{
+		cli.readline.close();
+	}
+}]);
+
+cli.readline.on('close', function()
 {
 	util.log("Program is exiting...");
 	
 	process.exit(0);
 	process.stdin.destroy();
 });
+
+cli.prompt();
