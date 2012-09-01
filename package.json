@@ -1,6 +1,6 @@
 {
 	"name": "hackers",
-	"version": "0.0.6",
+	"version": "0.0.7",
 
 	"description": "A MUD server and a client for a role-playing game in a futurist world",
 	"homepage" : "https://github.com/robinouu/hackers",
@@ -31,7 +31,8 @@
 	{
 		"colors" : "*",
 		"wormhole" : "*",
-		"xregexp" : "*"
+		"xregexp" : "*",
+		"mongodb" : "*",
 	},
 	
 	"engines":

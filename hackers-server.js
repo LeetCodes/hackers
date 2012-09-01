@@ -10,6 +10,7 @@
  */
 
 var util = require('util'),
+	utils = require('./lib/Utils.js'),
 	color = require("colors"),
 	wormhole = require("wormhole"),
 	Server = require("./lib/Server.js"),
@@ -17,6 +18,11 @@ var util = require('util'),
 	
 var pack = require("./package.json");
 
+/* Create the database connection */
+var Db = require('mongodb').Db,
+	DbServer = require('mongodb').Server;
+
+var dbclient = new Db('hackers', new DbServer("127.0.0.1", 27017, {}));
 
 // Create the server
 var server = new Server();
@@ -29,24 +35,26 @@ server.on('clientConnected', function (client)
 	var stream = client.stream;
 	wormhole(stream, 'auth', function (data)
 	{
-		util.log('A client request for login...');
+		util.log('A client request for login : ');
 		util.log(util.inspect(data));
 		
-		if (data.action === 'login' && data.user === 'demo' && data.pass === 'demo')
+		var res = dbclient.collection('users').findOne({user: data.user, pass: data.pass}, function(err, document)
 		{
-			client.name = data.user;
-			util.log(client.name + ' sign in.');
-			stream.write('chat', {sender: 'server'.green, msg: 'Thank you for logging in ! Type ' + 'help'.bold + ' to get a list of commands you can use on.'});
-        }
-		else
-		{
-			stream.write('chat', {sender: 'server'.red, msg: 'Bad identifiers'});
-		}
+			if (document)
+			{
+				client.name = data.user;
+				util.log(client.name + ' sign in.');
+				stream.write('chat', {sender: 'server'.green, msg: utils.EscClearScreen + 'Thank you for logging in ! Type ' + 'help'.bold + ' to get a list of commands you can use on.'});
+			}
+			else
+			{
+				stream.write('chat', {sender: 'server'.red, msg: 'Bad identifiers'});
+			}
+		});
 	});
 
-    stream.write('chat', {sender: 'server'.green, msg: 'Welcome to the ' + 'HaCker$'.bold.cyan + ' server !'});
+	stream.write('chat', {sender: 'server'.green, msg: utils.EscClearScreen + 'Welcome to the ' + 'HaCker$'.bold.cyan + ' server !'});
 	stream.write('auth', {action: 'login'});
-	
 });
 
 server.on('clientDisconnected', function(client)
@@ -65,6 +73,7 @@ server.on('stopped', function()
 	console.log("Server stopped.");
 	cli.prompt();
 });
+
 
 // Create a CLI
 var cli = new CLI();
@@ -97,6 +106,15 @@ cli.registerCommands([
 	}
 },
 {
+	cmd: "users *add *\"(?<username>[a-zA-Z0-9\ ]+)\" \"(?<password>[a-zA-Z0-9\ ]+)\"",
+	help: ("users add <username> <password>").bold + "\tAdd a user to the game",
+	callback: function(data)
+	{
+		util.log('Add user ' + data.username  + ' with password ' + data.password + '...');
+		dbclient.collection('users').insert({user: data.username, pass : data.password});
+	}
+},
+{
 	cmd: "help *(?<cmd>[a-zA-Z0-9\-\_\.]+)?",
 	help: ("help " + "<cmd>".cyan).bold + "\tGet the help for all or specified commands.",
 	callback: function(data)
@@ -115,8 +133,10 @@ cli.registerCommands([
 
 cli.rl.on('close', function()
 {
-	util.log("Program is exiting...");
+	util.log("Exiting server...");
 	
+	dbclient.close();
+
 	process.exit(0);
 	process.stdin.destroy();
 });
@@ -140,4 +160,14 @@ process.on('uncaughtException', function(e)
 	}
 });
 
-cli.prompt();
+// When connected to the MongoDB database
+dbclient.open(function(err, p_client)
+{
+	if (err)
+	{
+		util.debug('[' + 'mongodb'.bold.red + '] ' + err.toString());
+		return false;
+	}
+
+	cli.prompt();	
+});

@@ -23,10 +23,10 @@ connector.on('connected', function ()
 	{
 		if (data.action === 'login')
 		{
-			util.log("You need to login to access your character.");
-			cli.question('LOGIN : ', function (login)
+			util.log("You need to " + "login".yellow.bold + " to access your character.");
+			cli.question('  LOGIN : ', function (login)
 			{
-				cli.question('PASSWORD : ', function (pass)
+				cli.question('  PASSWORD : ', function (pass)
 				{
 					connector.send('auth', { action: 'login', user : login, pass: pass});
 					cli.prompt();
