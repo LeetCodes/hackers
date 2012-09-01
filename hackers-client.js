@@ -25,6 +25,7 @@ var client;
 cli.registerCommands([
 {
 	cmd: 'connect *(?<port>[0-9]+)?',
+	help: ("connect " + "<port>".cyan).bold + "\tStart the server on the specified port.",
 	callback: function(data)
 	{
 		var p = data.port ? data.port : 8081;
@@ -43,14 +44,16 @@ cli.registerCommands([
 	},
 },
 {
-	cmd: "help",
+	cmd: "help *(?<cmd>[a-zA-Z0-9\-\_\.]+)?",
+	help: ("help " + "<cmd>".cyan).bold + "\t\tGet the help for all or specified commands.",
 	callback: function(data)
 	{
-		util.log('\nUsage:\n' + cli.usage());
+		util.log(cli.usage(data.cmd));
 	}
 },
 {
 	cmd: "exit",
+	help: ("exit").bold + "\t\t\tQuit the program (same as Ctrl+C)",
 	callback: function(data)
 	{
 		cli.readline.close();
