@@ -24,6 +24,7 @@ var port = 8081;
 server.on('clientConnected', function(client)
 {
 	console.log(client.stream.remoteAddress.bold.green + ' client connected.');
+
 	
 	// Write in the hall channel of the client a welcome message
 	client.stream.write('hall',

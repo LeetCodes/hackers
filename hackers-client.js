@@ -44,6 +44,14 @@ cli.registerCommands([
 	},
 },
 {
+	cmd: "disconnect",
+	help: ("disconnect").bold + "\t\tForce disconnection from the server.",
+	callback: function(data)
+	{
+		util.log(cli.usage(data.cmd));
+	}
+},
+{
 	cmd: "help *(?<cmd>[a-zA-Z0-9\-\_\.]+)?",
 	help: ("help " + "<cmd>".cyan).bold + "\t\tGet the help for all or specified commands.",
 	callback: function(data)
