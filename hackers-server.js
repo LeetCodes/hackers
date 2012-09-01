@@ -11,6 +11,7 @@
 
 var util = require('util'),
 	utils = require('./lib/Utils.js'),
+	crypto = require('crypto'),
 	color = require("colors"),
 	wormhole = require("wormhole"),
 	Server = require("./lib/Server.js"),
@@ -107,11 +108,34 @@ cli.registerCommands([
 },
 {
 	cmd: "users *add *\"(?<username>[a-zA-Z0-9\ ]+)\" \"(?<password>[a-zA-Z0-9\ ]+)\"",
-	help: ("users add <username> <password>").bold + "\tAdd a user to the game",
+	help: ("users").bold + "\t\tManages list of users.",
 	callback: function(data)
 	{
-		util.log('Add user ' + data.username  + ' with password ' + data.password + '...');
-		dbclient.collection('users').insert({user: data.username, pass : data.password});
+		var sha1 = crypto.createHash('sha1');
+		sha1.update(data.password);
+		
+		var users = dbclient.collection('users');
+		data.password = sha1.digest('hex');
+		util.log('Add user ' + data.username  + ' to the database...');
+		
+		users.findOne({user: data.username}, function (err, doc)
+		{
+			if (doc)
+			{
+				util.debug('[' + 'mongodb'.bold.red + '] Could not add "' + data.username.bold + '" because the name is reserved by another user.');
+			}
+			else
+			{
+				users.insert({user: data.username, pass : data.password}, function (err)
+				{
+					if (err)
+						util.debug('[' + 'mongodb'.bold.green + '] ' + err);
+					else
+						util.log('Done.');
+				});
+			}
+		});
+		
 	}
 },
 {

@@ -8,6 +8,7 @@
  */
 var util = require("util"),
 	color = require('colors'),
+	crypto = require('crypto'),
 	CLI = require("./lib/CLI.js"),
 	wormhole = require("wormhole"),
 	RemoteConnector = require("./lib/RemoteConnector.js"),
@@ -16,6 +17,7 @@ var util = require("util"),
 // Create a CLI
 var cli = new CLI;
 var connector = new RemoteConnector;
+
 
 connector.on('connected', function ()
 {	
@@ -28,7 +30,9 @@ connector.on('connected', function ()
 			{
 				cli.question('  PASSWORD : ', function (pass)
 				{
-					connector.send('auth', { action: 'login', user : login, pass: pass});
+					var sha1 = crypto.createHash('sha1');
+					sha1.update(pass);
+					connector.send('auth', { action: 'login', user : login, pass: sha1.digest('hex')});
 					cli.prompt();
 				});
 			});	
