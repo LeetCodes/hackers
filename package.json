@@ -32,7 +32,7 @@
 		"colors" : "*",
 		"wormhole" : "*",
 		"xregexp" : "*",
-		"mongodb" : "*",
+		"mongodb" : "*"
 	},
 	
 	"engines":
