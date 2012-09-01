@@ -8,18 +8,13 @@
  */
 var util = require("util"),
 	color = require('colors'),
-	fs = require("fs"),
-	net = require('net'),
-	wormhole = require("wormhole"),
 	CLI = require("./lib/CLI.js"),
+	RemoteConnector = require("./lib/RemoteConnector.js"),
 	pack = require("./package.json");
 
-/* Program variables */
-
-
 // Create a CLI
-var cli = new CLI();
-var client;
+var cli = new CLI;
+var connector = new RemoteConnector;
 
 /* Register commands */
 cli.registerCommands([
@@ -28,19 +23,10 @@ cli.registerCommands([
 	help: ("connect " + "<port>".cyan).bold + "\tStart the server on the specified port.",
 	callback: function(data)
 	{
-		var p = data.port ? data.port : 8081;
+		var p = data.port ? data.port : 4000;
 		util.log('Connecting to port ' + p);
 
-		client = net.connect(p, 'localhost', function()
-		{
-			util.log('Connected !');
-			
-			wormhole(client, 'hall', function (data)
-			{
-				if (typeof data.msg !== 'undefined')
-					util.log(data.msg);
-			});
-		});
+		connector.connect('localhost', p);
 	},
 },
 {
@@ -48,7 +34,7 @@ cli.registerCommands([
 	help: ("disconnect").bold + "\t\tForce disconnection from the server.",
 	callback: function(data)
 	{
-		util.log(cli.usage(data.cmd));
+		connector.disconnect();
 	}
 },
 {

@@ -11,7 +11,6 @@
 
 var util = require('util'),
 	color = require("colors"),
-	
 	Server = require("./lib/Server.js"),
 	CLI = require("./lib/CLI.js");
 	
@@ -20,18 +19,15 @@ var pack = require("./package.json");
 
 // Create the server
 var server = new Server();
-var port = 8081;
+var port = 4000;
 server.on('clientConnected', function(client)
 {
 	console.log(client.stream.remoteAddress.bold.green + ' client connected.');
+});
 
-	
-	// Write in the hall channel of the client a welcome message
-	client.stream.write('hall',
-	{
-		id : 'welcome',
-		msg : "Welcome to the " + "HACKERS SERVER".cyan.bold + " (" + pack.version + ")\n\nType " + "[help]".bold.green + " for available commands"
-	});
+server.on('clientDisconnected', function()
+{
+	util.log("A client has disconnected.");
 });
 
 server.on('started', function(p)
