@@ -11,6 +11,7 @@
 
 var util = require('util'),
 	color = require("colors"),
+	wormhole = require("wormhole"),
 	Server = require("./lib/Server.js"),
 	CLI = require("./lib/CLI.js");
 	
@@ -20,14 +21,33 @@ var pack = require("./package.json");
 // Create the server
 var server = new Server();
 var port = 4000;
-server.on('clientConnected', function(client)
+
+server.on('clientConnected', function (client)
 {
-	console.log(client.stream.remoteAddress.bold.green + ' client connected.');
+	console.log("A client has connected (" + client.stream.remoteAddress.bold.green + ").");
+	
+	var stream = client.stream;
+	wormhole(stream, 'auth', function (data)
+	{
+		util.log('A client request for login...');
+		util.log(util.inspect(data));
+		
+		if (data.action === 'login' && data.user === 'demo' && data.pass === 'demo')
+		{
+			client.name = data.user;
+			util.log(client.name + ' sign in.');
+			stream.write('chat', {sender: 'server'.green, msg: 'Thank you for logging in ! Type ' + 'help'.bold + ' to get a list of commands you can use on.'});
+        }
+	});
+
+    stream.write('chat', {sender: 'server'.green, msg: 'Welcome to the ' + 'HaCker$'.bold.cyan + ' server !'});
+	stream.write('auth', {action: 'login'});
+	
 });
 
-server.on('clientDisconnected', function()
+server.on('clientDisconnected', function(client)
 {
-	util.log("A client has disconnected.");
+	util.log((client.name) ? client.name + " sign out." : "A client has disconnected.");
 });
 
 server.on('started', function(p)
@@ -85,11 +105,11 @@ cli.registerCommands([
 	help: ("exit").bold + "\t\tQuit the program (same as Ctrl+C)",
 	callback: function(data)
 	{
-		cli.readline.close();
+		cli.rl.close();
 	}
 }]);
 
-cli.readline.on('close', function()
+cli.rl.on('close', function()
 {
 	util.log("Program is exiting...");
 	

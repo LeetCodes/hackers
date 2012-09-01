@@ -9,6 +9,7 @@
 var util = require("util"),
 	color = require('colors'),
 	CLI = require("./lib/CLI.js"),
+	wormhole = require("wormhole"),
 	RemoteConnector = require("./lib/RemoteConnector.js"),
 	pack = require("./package.json");
 
@@ -16,11 +17,44 @@ var util = require("util"),
 var cli = new CLI;
 var connector = new RemoteConnector;
 
+connector.on('connected', function ()
+{	
+	wormhole(connector.socket, 'auth', function (data)
+	{
+		if (data.action === 'login')
+		{
+			util.log("You need to login to access your character.");
+			cli.question('LOGIN : ', function (login)
+			{
+				cli.question('PASSWORD : ', function (pass)
+				{
+					connector.send('auth', { action: 'login', user : login, pass: pass});
+					cli.prompt();
+				});
+			});	
+        }
+	});
+	
+	wormhole(connector.socket, 'chat', function (data)
+	{
+		if (typeof data.sender === 'string' && typeof data.msg === 'string')
+			util.log('[' + data.sender.bold + '] ' + data.msg.substring(0, 250));
+	});
+});
+
+connector.on('disconnected', function (err)
+{
+	if (err)
+		util.debug('Disconnected from the server : ' + err);
+	else
+		util.log('Disconnected from the server.');
+});
+
 /* Register commands */
 cli.registerCommands([
 {
 	cmd: 'connect *(?<port>[0-9]+)?',
-	help: ("connect " + "<port>".cyan).bold + "\tStart the server on the specified port.",
+	help: ("connect " + "<port>".cyan).bold + "\tStart the client on the specified port (4000 by default).",
 	callback: function(data)
 	{
 		var p = data.port ? data.port : 4000;
@@ -50,11 +84,11 @@ cli.registerCommands([
 	help: ("exit").bold + "\t\t\tQuit the program (same as Ctrl+C)",
 	callback: function(data)
 	{
-		cli.readline.close();
+		cli.rl.close();
 	}
 }]);
 
-cli.readline.on('close', function()
+cli.rl.on('close', function()
 {
 	util.log("Program is exiting...");
 	
