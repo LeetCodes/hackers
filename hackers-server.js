@@ -38,6 +38,10 @@ server.on('clientConnected', function (client)
 			util.log(client.name + ' sign in.');
 			stream.write('chat', {sender: 'server'.green, msg: 'Thank you for logging in ! Type ' + 'help'.bold + ' to get a list of commands you can use on.'});
         }
+		else
+		{
+			stream.write('chat', {sender: 'server'.red, msg: 'Bad identifiers'});
+		}
 	});
 
     stream.write('chat', {sender: 'server'.green, msg: 'Welcome to the ' + 'HaCker$'.bold.cyan + ' server !'});
