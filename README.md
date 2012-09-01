@@ -3,49 +3,26 @@
 A MUD server and a client for a roleplay game in a futurist world
 
 ## Installation ##
+
 Using npm package manager :
 
 	npm install hackers
 	
-## Launch the server ##
-hackers comes with a server program that you can launch using :
+or after downloading or cloning the repo :
 
-	node hackers-server.js
-	
-#### Start the server ####
-	
-	> start
-	You can also specify a port (**4000** by default) :
-	> start 8081
-	
-#### Stop the server ####
+	npm install ./
 
-	> stop
+## Documentation ##
 
-#### Display the number of connected clients ####
+Go to [the wiki](https://github.com/robinouu/hackers/wiki) to read how to launch server and client properly.
 
-	> clients
-	
-#### Display the help ####
-
-	> help
-
-#### Quit the program ####
-
-	> exit
-	
-## Launch the client ##
-
-The client uses terminal commands like on the server tool :
-
-	> connect (port)
-	> disconnect
-	> help	
-	> exit
-	
 ## Licence ##
 
 hackers is distributed under the [BSD licence](https://github.com/robinouu/hackers/blob/master/LICENSE).
+
+## Feature requests ##
+
+If you have some ideas to offer, please [create an issue](https://github.com/robinouu/hackers/issues/new) with an *enhancement* tag.
 
 ## Thanks to ! ##
 
