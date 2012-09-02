@@ -160,20 +160,24 @@ server.on('clientConnected', function (client)
 	
 	wormhole(stream, 'auth', function (data)
 	{
-		util.log('A client request for login : ');
-		util.log(util.inspect(data));
-		
 		var res = dbclient.collection('users').findOne({user: data.user, pass: data.pass}, function(err, document)
 		{
 			if (document)
 			{
 				client.name = data.user;
-				util.log(client.name + ' sign in.');
+				util.log(client.name.bold.yellow + ' signs in.');
 				stream.write('chat', {sender: 'server'.green, msg: utils.EscClearScreen + 'Thank you for logging in ! Type ' + 'help'.bold + ' to get a list of commands you can use on.'});
+				stream.write('rpc', {action: 'register', cmds : [{
+					name: 'say',
+					cmd: 'say (?<msg>.+)?',
+					help: ("say " + "<msg>".cyan).bold + "\tSends your message to the public chat ",
+					channel : 'chat'
+				}]});
 			}
 			else
 			{
 				stream.write('chat', {sender: 'server'.red, msg: 'Bad identifiers'});
+				stream.write('auth', {action: 'login'});
 			}
 		});
 	});
@@ -184,28 +188,17 @@ server.on('clientConnected', function (client)
 		{
 			safeData = {action: 'say', sender: data.sender, msg: data.msg.substring(0, 250)};
 			server.broadcast('chat', safeData);
-			util.log('[' + "chat".bold.green + '] ' + safeData.sender.bold.yellow + ' : "' + safeData.msg + '"');
+			util.log('[' + "chat".bold.green + '][' + safeData.sender.bold.yellow + '] ' + safeData.msg);
 		}
 	});
 
 	stream.write('chat', {sender: 'server'.green, msg: utils.EscClearScreen + 'Welcome to the ' + 'HaCker$'.bold.cyan + ' server !'});
-	
-	var sayCmd = {
-		cmd: 'say (?<msg>.+)?',
-		help: ("say " + "<msg>".cyan).bold + "\tSends your message to the public server chat",
-		callback: function(data)
-		{
-			util.log('chat is welcome');
-		}
-	};
-	
-	stream.write('rpc', {action: 'register', cmds : [sayCmd] });
-
+	stream.write('auth', {action: 'login'});
 });
 
 server.on('clientDisconnected', function(client)
 {
-	util.log((client.name) ? client.name + " sign out." : "A client has disconnected.");
+	util.log((client.name) ? client.name.bold.yellow + " signs out." : "A client has disconnected.");
 });
 
 server.on('started', function(p)

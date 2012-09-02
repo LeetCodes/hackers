@@ -17,7 +17,8 @@ var util = require("util"),
 // Create a CLI
 var cli = new CLI;
 var connector = new RemoteConnector;
- 
+var username = '';
+
 connector.on('connected', function ()
 {
 	cli.unregisterCommand('connect');
@@ -27,13 +28,16 @@ connector.on('connected', function ()
 	{
 		if (data.action === 'login')
 		{
-			util.log("You need to " + "login".yellow.bold + " to access your character.");
+			util.log("You need to login to access your character.");
 			cli.question('  LOGIN : ', function (login)
 			{
 				cli.question('  PASSWORD : ', function (pass)
 				{
 					var sha1 = crypto.createHash('sha1');
 					sha1.update(pass);
+					
+					username = login;
+					
 					connector.send('auth', { action: 'login', user : login, pass: sha1.digest('hex')});
 					cli.prompt();
 				});
@@ -41,11 +45,22 @@ connector.on('connected', function ()
         }
 	});
 	
+	/* RPC client , redirect commands result to remote channels */
 	wormhole(connector.socket, 'rpc', function (data)
 	{
 		if (data.action === 'register' && typeof data.cmds === 'object')
 		{
-			util.log(data.cmds.length + ' new commands available !');
+			cli.browseCmds(data.cmds, function(c)
+			{
+				c.callback = function (data)
+				{
+					data.action = (c.name) ? c.name : c.cmdGroup;
+					data.sender = username;
+					connector.send(c.channel, data);
+				};
+				
+			}, true);
+			
 			cli.registerCommands(data.cmds);
 		}
 	});
@@ -53,7 +68,7 @@ connector.on('connected', function ()
 	wormhole(connector.socket, 'chat', function (data)
 	{
 		if (typeof data.sender === 'string' && typeof data.msg === 'string')
-			util.log('[' + data.sender.bold + '] ' + data.msg.substring(0, 250));
+			util.log('[' + 'chat'.bold.green + '][' + ((data.sender === username) ? data.sender.bold.grey : data.sender.bold.yellow) + '] ' + data.msg.substring(0, 250));
 	});
 });
 
