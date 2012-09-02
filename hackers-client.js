@@ -17,10 +17,12 @@ var util = require("util"),
 // Create a CLI
 var cli = new CLI;
 var connector = new RemoteConnector;
-
-
+ 
 connector.on('connected', function ()
-{	
+{
+	cli.unregisterCommand('connect');
+	cli.registerCommand(cmdDisconnect);
+	
 	wormhole(connector.socket, 'auth', function (data)
 	{
 		if (data.action === 'login')
@@ -39,6 +41,15 @@ connector.on('connected', function ()
         }
 	});
 	
+	wormhole(connector.socket, 'rpc', function (data)
+	{
+		if (data.action === 'register' && typeof data.cmds === 'object')
+		{
+			util.log(data.cmds.length + ' new commands available !');
+			cli.registerCommands(data.cmds);
+		}
+	});
+	
 	wormhole(connector.socket, 'chat', function (data)
 	{
 		if (typeof data.sender === 'string' && typeof data.msg === 'string')
@@ -52,11 +63,13 @@ connector.on('disconnected', function (err)
 		util.debug('Disconnected from the server : ' + err);
 	else
 		util.log('Disconnected from the server.');
+		
+	cli.cmds = [];
+	cli.registerCommands([cmdConnect, cmdHelp, cmdExit]);
 });
 
 /* Register commands */
-cli.registerCommands([
-{
+var cmdConnect = {
 	cmd: 'connect *(?<port>[0-9]+)?',
 	help: ("connect " + "<port>".cyan).bold + "\tStart the client on the specified port (4000 by default).",
 	callback: function(data)
@@ -66,31 +79,36 @@ cli.registerCommands([
 
 		connector.connect('localhost', p);
 	},
-},
-{
+};
+
+var cmdDisconnect = {
 	cmd: "disconnect",
 	help: ("disconnect").bold + "\t\tForce disconnection from the server.",
 	callback: function(data)
 	{
 		connector.disconnect();
 	}
-},
-{
+};
+
+var cmdHelp = {
 	cmd: "help *(?<cmd>[a-zA-Z0-9\-\_\.]+)?",
 	help: ("help " + "<cmd>".cyan).bold + "\t\tGet the help for all or specified commands.",
 	callback: function(data)
 	{
 		util.log(cli.usage(data.cmd));
 	}
-},
-{
+};
+
+var cmdExit = {
 	cmd: "exit",
 	help: ("exit").bold + "\t\t\tQuit the program (same as Ctrl+C)",
 	callback: function(data)
 	{
 		cli.rl.close();
 	}
-}]);
+}
+
+cli.registerCommands([cmdConnect, cmdHelp, cmdExit]);
 
 cli.rl.on('close', function()
 {

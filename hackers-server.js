@@ -25,62 +25,12 @@ var Db = require('mongodb').Db,
 
 var dbclient = new Db('hackers', new DbServer("127.0.0.1", 27017, {}));
 
-// Create the server
-var server = new Server();
-var port = 4000;
-
-server.on('clientConnected', function (client)
-{
-	console.log("A client has connected (" + client.stream.remoteAddress.bold.green + ").");
-	
-	var stream = client.stream;
-	wormhole(stream, 'auth', function (data)
-	{
-		util.log('A client request for login : ');
-		util.log(util.inspect(data));
-		
-		var res = dbclient.collection('users').findOne({user: data.user, pass: data.pass}, function(err, document)
-		{
-			if (document)
-			{
-				client.name = data.user;
-				util.log(client.name + ' sign in.');
-				stream.write('chat', {sender: 'server'.green, msg: utils.EscClearScreen + 'Thank you for logging in ! Type ' + 'help'.bold + ' to get a list of commands you can use on.'});
-			}
-			else
-			{
-				stream.write('chat', {sender: 'server'.red, msg: 'Bad identifiers'});
-			}
-		});
-	});
-
-	stream.write('chat', {sender: 'server'.green, msg: utils.EscClearScreen + 'Welcome to the ' + 'HaCker$'.bold.cyan + ' server !'});
-	stream.write('auth', {action: 'login'});
-});
-
-server.on('clientDisconnected', function(client)
-{
-	util.log((client.name) ? client.name + " sign out." : "A client has disconnected.");
-});
-
-server.on('started', function(p)
-{
-	util.log("Server started on port " + p.toString().bold.green);
-	cli.prompt();
-});
-
-server.on('stopped', function()
-{
-	console.log("Server stopped.");
-	cli.prompt();
-});
-
-
 // Create a CLI
 var cli = new CLI();
 
 /* Register commands */
-cli.registerCommands([
+
+var cmdStart =
 {
 	cmd: 'start *(?<port>[0-9]+)?',
 	help: ("start " + "<port>".cyan).bold + "\tStarts the server on the specified port.",
@@ -88,8 +38,10 @@ cli.registerCommands([
 	{
 		port = data.port ? data.port : port;
 		server.start(port);
-	},
-},
+	}
+};
+
+var cmdStop = 
 {
 	cmd: "stop",
 	help: ("stop").bold + "\t\tStops the server. It will disconnect all sockets from the port.",
@@ -97,7 +49,9 @@ cli.registerCommands([
 	{
 		server.stop();
 	}
-},
+};
+
+var cmdClients =
 {
 	cmd: "clients",
 	help: ("clients").bold + "\tGets the number of connected clients.",
@@ -105,7 +59,9 @@ cli.registerCommands([
 	{
 		util.log(server.clients.length ? server.clients.length.toString().bold.green + ' clients connected' : 'no client connected');
 	}
-},
+};
+
+var cmdUsers =
 {
 	cmdGroup: "users",
 	help: ("users").bold + "\t\tManages game users from the server.",
@@ -120,13 +76,13 @@ cli.registerCommands([
 			
 			var users = dbclient.collection('users');
 			data.password = sha1.digest('hex');
-			util.log('Add user ' + data.username  + ' to the database...');
+			util.log('Add user "' + data.username.yellow.bold  + '" to the database...');
 			
 			users.findOne({user: data.username}, function (err, doc)
 			{
 				if (doc)
 				{
-					util.debug('[' + 'mongodb'.bold.red + '] Could not add "' + data.username.bold + '" because the name is reserved by another user.');
+					util.debug('[' + 'mongodb'.bold.red + '] Could not add "' + data.username.yellow.bold + '" because the name is reserved by another user.');
 				}
 				else
 				{
@@ -147,18 +103,22 @@ cli.registerCommands([
 		callback: function(data)
 		{
 			var users = dbclient.collection('users');
-			util.log('Removing user ' + data.username  + ' from the database...');
+			util.log('Removing user "' + data.username.yellow.bold  + '" from the database...');
 			
-			users.remove({user: data.username}, function (err)
+			users.remove({user: data.username}, function (err, res)
 			{
 				if (err)
 					util.debug('[' + 'mongodb'.bold.red + '] ' + err);
+				else if (!res)
+					util.debug('[' + 'mongodb'.bold.red + '] Could not find "' + data.username.yellow.bold + '" username in the database.');
 				else
 					util.log('Done.');
 			});
 		}
 	}]
-},
+};
+
+var cmdHelp =
 {
 	cmd: "help *(?<cmd>[a-zA-Z0-9\-\_\.]+)?",
 	help: ("help " + "<cmd>".cyan).bold + "\tGets the help for all or specified commands.",
@@ -166,7 +126,9 @@ cli.registerCommands([
 	{
 		util.log(cli.usage(data.cmd));
 	}
-},
+};
+
+var cmdExit =
 {
 	cmd: "exit",
 	help: ("exit").bold + "\t\tQuit the program (same as Ctrl+C)",
@@ -174,7 +136,7 @@ cli.registerCommands([
 	{
 		cli.rl.close();
 	}
-}]);
+};
 
 cli.rl.on('close', function()
 {
@@ -185,6 +147,85 @@ cli.rl.on('close', function()
 	process.exit(0);
 	process.stdin.destroy();
 });
+
+// Create the server
+var server = new Server();
+var port = 4000;
+
+server.on('clientConnected', function (client)
+{
+	console.log("A client has connected (" + client.stream.remoteAddress.bold.green + ").");
+	
+	var stream = client.stream;
+	
+	wormhole(stream, 'auth', function (data)
+	{
+		util.log('A client request for login : ');
+		util.log(util.inspect(data));
+		
+		var res = dbclient.collection('users').findOne({user: data.user, pass: data.pass}, function(err, document)
+		{
+			if (document)
+			{
+				client.name = data.user;
+				util.log(client.name + ' sign in.');
+				stream.write('chat', {sender: 'server'.green, msg: utils.EscClearScreen + 'Thank you for logging in ! Type ' + 'help'.bold + ' to get a list of commands you can use on.'});
+			}
+			else
+			{
+				stream.write('chat', {sender: 'server'.red, msg: 'Bad identifiers'});
+			}
+		});
+	});
+	
+	wormhole(stream, 'chat', function (data)
+	{
+		if (data.action === 'say' && typeof data.sender === 'string')
+		{
+			safeData = {action: 'say', sender: data.sender, msg: data.msg.substring(0, 250)};
+			server.broadcast('chat', safeData);
+			util.log('[' + "chat".bold.green + '] ' + safeData.sender.bold.yellow + ' : "' + safeData.msg + '"');
+		}
+	});
+
+	stream.write('chat', {sender: 'server'.green, msg: utils.EscClearScreen + 'Welcome to the ' + 'HaCker$'.bold.cyan + ' server !'});
+	
+	var sayCmd = {
+		cmd: 'say (?<msg>.+)?',
+		help: ("say " + "<msg>".cyan).bold + "\tSends your message to the public server chat",
+		callback: function(data)
+		{
+			util.log('chat is welcome');
+		}
+	};
+	
+	stream.write('rpc', {action: 'register', cmds : [sayCmd] });
+
+});
+
+server.on('clientDisconnected', function(client)
+{
+	util.log((client.name) ? client.name + " sign out." : "A client has disconnected.");
+});
+
+server.on('started', function(p)
+{
+	util.log("Server started on port " + p.toString().bold.green);
+	cli.prompt();
+	
+	cli.unregisterCommand('start');
+	cli.registerCommands([cmdClients, cmdStop]);
+});
+
+server.on('stopped', function()
+{
+	console.log("Server stopped.");
+	cli.prompt();
+	
+	cli.cmds = [];
+	cli.registerCommands([cmdStart, cmdUsers, cmdHelp, cmdExit]);
+});
+
 
 /* Process error handler */
 process.on('uncaughtException', function(e)
@@ -213,6 +254,7 @@ dbclient.open(function(err, p_client)
 		util.debug('[' + 'mongodb'.bold.red + '] ' + err.toString());
 		return false;
 	}
-
+	
+	cli.registerCommands([cmdStart, cmdUsers, cmdHelp, cmdExit]);
 	cli.prompt();	
 });
