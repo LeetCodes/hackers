@@ -107,36 +107,44 @@ cli.registerCommands([
 	}
 },
 {
-	cmd: "users *add *\"(?<username>[a-zA-Z0-9\ ]+)\" \"(?<password>[a-zA-Z0-9\ ]+)\"",
-	help: ("users").bold + "\t\tManages list of users.",
-	callback: function(data)
+	cmdGroup: "users",
+	help: ("users").bold + "\t\tManages the users.",
+	children: [
 	{
-		var sha1 = crypto.createHash('sha1');
-		sha1.update(data.password);
-		
-		var users = dbclient.collection('users');
-		data.password = sha1.digest('hex');
-		util.log('Add user ' + data.username  + ' to the database...');
-		
-		users.findOne({user: data.username}, function (err, doc)
+		cmd: "users *add *\"(?<username>[a-zA-Z0-9\ ]+)\" \"(?<password>[a-zA-Z0-9\ ]+)\"",
+		help: ("users " + "add".cyan).bold + "\t<username> <password>\tAdd a unique user to the database",
+		callback: function(data)
 		{
-			if (doc)
+			var sha1 = crypto.createHash('sha1');
+			sha1.update(data.password);
+			
+			var users = dbclient.collection('users');
+			data.password = sha1.digest('hex');
+			util.log('Add user ' + data.username  + ' to the database...');
+			
+			users.findOne({user: data.username}, function (err, doc)
 			{
-				util.debug('[' + 'mongodb'.bold.red + '] Could not add "' + data.username.bold + '" because the name is reserved by another user.');
-			}
-			else
-			{
-				users.insert({user: data.username, pass : data.password}, function (err)
+				if (doc)
 				{
-					if (err)
-						util.debug('[' + 'mongodb'.bold.green + '] ' + err);
-					else
-						util.log('Done.');
-				});
-			}
-		});
-		
-	}
+					util.debug('[' + 'mongodb'.bold.red + '] Could not add "' + data.username.bold + '" because the name is reserved by another user.');
+				}
+				else
+				{
+					users.insert({user: data.username, pass : data.password}, function (err)
+					{
+						if (err)
+							util.debug('[' + 'mongodb'.bold.green + '] ' + err);
+						else
+							util.log('Done.');
+					});
+				}
+			});				
+		}
+	},
+	{
+		cmd: "users *remove *\"(?<username>[a-zA-Z0-9\ ]+)\"",
+		help: (("users " + "remove".cyan).bold) + "\t<username> \t\tRemove a user from to the database, by name",
+	}]
 },
 {
 	cmd: "help *(?<cmd>[a-zA-Z0-9\-\_\.]+)?",
