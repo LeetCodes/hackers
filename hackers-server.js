@@ -83,7 +83,7 @@ var cli = new CLI();
 cli.registerCommands([
 {
 	cmd: 'start *(?<port>[0-9]+)?',
-	help: ("start " + "<port>".cyan).bold + "\tStart the server on the specified port.",
+	help: ("start " + "<port>".cyan).bold + "\tStarts the server on the specified port.",
 	callback: function(data)
 	{
 		port = data.port ? data.port : port;
@@ -92,7 +92,7 @@ cli.registerCommands([
 },
 {
 	cmd: "stop",
-	help: ("stop").bold + "\t\tStop the server. It will disconnect all sockets from the port.",
+	help: ("stop").bold + "\t\tStops the server. It will disconnect all sockets from the port.",
 	callback: function(data)
 	{
 		server.stop();
@@ -100,7 +100,7 @@ cli.registerCommands([
 },
 {
 	cmd: "clients",
-	help: ("clients").bold + "\tGet the number of connected clients.",
+	help: ("clients").bold + "\tGets the number of connected clients.",
 	callback: function()
 	{
 		util.log(server.clients.length ? server.clients.length.toString().bold.green + ' clients connected' : 'no client connected');
@@ -108,7 +108,7 @@ cli.registerCommands([
 },
 {
 	cmdGroup: "users",
-	help: ("users").bold + "\t\tManages the users.",
+	help: ("users").bold + "\t\tManages game users from the server.",
 	children: [
 	{
 		cmd: "users *add *\"(?<username>[a-zA-Z0-9\ ]+)\" \"(?<password>[a-zA-Z0-9\ ]+)\"",
@@ -133,7 +133,7 @@ cli.registerCommands([
 					users.insert({user: data.username, pass : data.password}, function (err)
 					{
 						if (err)
-							util.debug('[' + 'mongodb'.bold.green + '] ' + err);
+							util.debug('[' + 'mongodb'.bold.red + '] ' + err);
 						else
 							util.log('Done.');
 					});
@@ -143,12 +143,25 @@ cli.registerCommands([
 	},
 	{
 		cmd: "users *remove *\"(?<username>[a-zA-Z0-9\ ]+)\"",
-		help: (("users " + "remove".cyan).bold) + "\t<username> \t\tRemove a user from to the database, by name",
+		help: (("users " + "remove".cyan).bold) + "\t<username> \t\tRemoves a user from to the database",
+		callback: function(data)
+		{
+			var users = dbclient.collection('users');
+			util.log('Removing user ' + data.username  + ' from the database...');
+			
+			users.remove({user: data.username}, function (err)
+			{
+				if (err)
+					util.debug('[' + 'mongodb'.bold.red + '] ' + err);
+				else
+					util.log('Done.');
+			});
+		}
 	}]
 },
 {
 	cmd: "help *(?<cmd>[a-zA-Z0-9\-\_\.]+)?",
-	help: ("help " + "<cmd>".cyan).bold + "\tGet the help for all or specified commands.",
+	help: ("help " + "<cmd>".cyan).bold + "\tGets the help for all or specified commands.",
 	callback: function(data)
 	{
 		util.log(cli.usage(data.cmd));
