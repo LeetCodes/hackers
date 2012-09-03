@@ -28,8 +28,11 @@ var dbclient = new Db('hackers', new DbServer("127.0.0.1", 27017, {}));
 // Create a CLI
 var cli = new CLI();
 
-/* Register commands */
+// Create the server
+var server = new Server();
+var port = 4000;
 
+/* Register commands */
 var cmdStart =
 {
 	cmd: 'start *(?<port>[0-9]+)?',
@@ -147,10 +150,6 @@ cli.rl.on('close', function()
 	process.exit(0);
 	process.stdin.destroy();
 });
-
-// Create the server
-var server = new Server();
-var port = 4000;
 
 server.on('clientConnected', function (client)
 {
