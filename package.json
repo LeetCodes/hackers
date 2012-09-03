@@ -35,6 +35,11 @@
 		"mongodb" : "*"
 	},
 	
+	"devDependencies":
+	{
+		"mocha": "*"
+	},
+	
 	"engines":
 	{
 		"node": ">= 0.4.0"
