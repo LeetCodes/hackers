@@ -42,7 +42,7 @@ describe('hackers client', function()
 	});
 	
 	/* -------------------------------------------------- */
-	it('connects and disconnect from the server', function()
+	it('connects and disconnects from the server', function()
 	{
 		connector.connect('localhost', 4000);
 	});
