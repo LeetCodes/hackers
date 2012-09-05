@@ -31,7 +31,8 @@
 	{
 		"colors" : "*",
 		"xregexp" : "*",
-		"mongodb" : "*"
+		"mongodb" : "*",
+		"iconv-lite" : "*"
 	},
 	
 	"devDependencies":
