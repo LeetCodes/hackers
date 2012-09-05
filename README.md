@@ -29,7 +29,6 @@ If you have some ideas, please [create an issue](https://github.com/robinouu/hac
 hackers depends on the following libraries :
 
   - [colors](https://npmjs.org/package/colors)
-  - [wormhole](https://npmjs.org/package/wormhole)
   - [xregexp](https://npmjs.org/package/xregexp)
   - [mongodb](https://npmjs.org/package/mongodb) 
   - [mocha](https://npmjs.org/package/mocha)  (test framework)
