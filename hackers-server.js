@@ -165,7 +165,34 @@ server.on('userConnected', function (user)
 	console.log(user.username.toString().player.bold + " has joined (" + user.stream.remoteAddress.toString().info.bold + ").");
 	
 	user.gotoRoom(hall);
-	user.send(utils.EscClearScreen + 'Welcome to the '.white + 'HaCker$'.info.strong + ' server ! '.white + utils.NewLine + utils.NewLine + 'Type '.white + 'help'.command.strong + ' to get a list of available commands.'.white + utils.NewLine);
+	user.send(utils.ClearScreen + 'Welcome to the '.white + 'HaCker$'.info.strong + ' server ! '.white + utils.NewLine + utils.NewLine + 'Type '.white + 'help'.command.strong + ' to get a list of available commands.'.white + utils.NewLine);
+	
+	user.availableCommands.registerCommands([
+	{
+		cmd: 'login *\"(?<username>[a-zA-Z0-9\ ]+)\" \"(?<password>[a-zA-Z0-9\ ]+)\"',
+		help: "login".bold + "\t" + "<username> <password>".bold.cyan + "\tAdd a unique user to the database",
+		callback: function(data, sender)
+		{
+			var sha1 = crypto.createHash('sha1');
+			sha1.update(data.password);
+			
+			var users = dbclient.collection('users');
+			data.password = sha1.digest('hex');
+			
+			users.findOne({user: data.username, pass: data.password}, function (err, res)
+			{
+				if (res)
+				{
+					user.username = data.username;
+					user._id = res._id;
+					user.send('[' + 'server'.strong.info + '] ' + 'You are now logged as ' + data.username.player.strong + ' ! ');
+					util.log('log ' + res._id);
+				}
+				else
+					user.send('[' + 'server'.strong.error + '] ' + 'Authentication failed.');
+			});				
+		}
+	}]);
 });
 
 server.on('userDisconnected', function (user)
