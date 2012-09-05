@@ -30,7 +30,6 @@
 	"dependencies":
 	{
 		"colors" : "*",
-		"wormhole" : "*",
 		"xregexp" : "*",
 		"mongodb" : "*"
 	},

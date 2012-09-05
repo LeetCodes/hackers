@@ -12,7 +12,6 @@
 var util = require('util'),
 	utils = require('./lib/Utils.js'),
 	crypto = require('crypto'),
-	wormhole = require("wormhole"),
 	Server = require("./lib/Server.js"),
 	Room = require("./lib/Room.js"),
 	CLI = require("./lib/CLI.js");
