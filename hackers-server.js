@@ -183,14 +183,14 @@ server.on('userConnected', function (user)
 			{
 				if (res)
 				{
+					var lastUsername = user.username;
 					user.username = data.username;
 					user._id = res._id;
 					user.send('[' + 'server'.strong.info + '] ' + 'You are now logged as ' + data.username.player.strong + ' ! ');
-					util.log('log ' + res._id);
 				}
 				else
 					user.send('[' + 'server'.strong.error + '] ' + 'Authentication failed.');
-			});				
+			});
 		}
 	}]);
 });
