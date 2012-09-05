@@ -1,6 +1,6 @@
 {
 	"name": "hackers",
-	"version": "0.0.8",
+	"version": "0.0.9",
 
 	"description": "A MUD server and a client for a role-playing game in a futurist world",
 	"homepage" : "https://github.com/robinouu/hackers",
@@ -47,7 +47,7 @@
 	
 	"scripts":
 	{
-		"test": "./node_modules/.bin/mocha"
+		"test": "node_modules/.bin/mocha"
 	},
 	
 	"main": "./hackers-server.js"

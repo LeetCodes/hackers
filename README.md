@@ -14,7 +14,7 @@ or after downloading or cloning the repo :
 
 ## Documentation ##
 
-Go to [the wiki](https://github.com/robinouu/hackers/wiki) to read how to launch server and client properly.
+Go to [the wiki](https://github.com/robinouu/hackers/wiki) to read how to launch the server properly and access to it.
 
 ## Licence ##
 
@@ -22,7 +22,7 @@ hackers is distributed under the [BSD licence](https://github.com/robinouu/hacke
 
 ## Feature requests ##
 
-If you have some ideas to offer, please [create an issue](https://github.com/robinouu/hackers/issues/new) with an *enhancement* tag.
+If you have some ideas, please [create an issue](https://github.com/robinouu/hackers/issues/new) with an *enhancement* tag, I will consider it as soon as possible.
 
 ## Thanks to ! ##
 
