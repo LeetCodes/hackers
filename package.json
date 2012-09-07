@@ -32,6 +32,7 @@
 		"colors" : "*",
 		"xregexp" : "*",
 		"mongodb" : "*",
+		"mongoose" : "*",
 		"iconv-lite" : "*"
 	},
 	

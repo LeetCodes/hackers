@@ -14,27 +14,25 @@ var util = require('util'),
 	crypto = require('crypto'),
 	Server = require("./lib/Server.js"),
 	Room = require("./lib/Room.js"),
+	mongoose = require('mongoose'),
 	CLI = require("./lib/CLI.js");
 	
 var pack = require("./package.json");
 
 
 /* Initialize the mongodb driver */
-var Db = require('mongodb').Db,
-	DbServer = require('mongodb').Server;
-	
-var dbclient = new Db('hackers', new DbServer("127.0.0.1", 27017, {}));
-dbclient.open(function(err, p_client)
+var db = mongoose.createConnection('localhost', 'hackers', 27017);
+  
+db.on('error', function (err)
 {
-	if (err)
-	{
-		util.debug('[' + 'mongodb'.error + '] ' + err.toString());
-		return false;
-	}
-	
+	util.debug('[' + 'mongodb'.error.strong + '] ' + err);
+});
+
+db.once('open', function ()
+{
 	cli.cmdList.registerCommands([cmdStart, cmdHelp, cmdExit]);
 	cli.prompt();	
-});
+});  
 
 // Create a CLI
 var cli = new CLI();
@@ -80,22 +78,23 @@ var cmdUsers =
 		help: "users add ".strong + "<username> <password>".argument.strong + "\tAdd a unique user to the database",
 		callback: function(data)
 		{
-			var sha1 = crypto.createHash('sha1');
-			sha1.update(data.password);
-			
-			var users = dbclient.collection('users');
-			data.password = sha1.digest('hex');
 			util.log('Add user "' + data.username.toString().player.strong + '" to the database...');
 			
-			users.findOne({user: data.username}, function (err, doc)
+			var sha1 = crypto.createHash('sha1');
+			sha1.update(data.password);
+			data.password = sha1.digest('hex');
+			
+			var UserModel = mongoose.model('User');
+			var query = UserModel.findOne({user: data.username});
+			query.exec(function (err, user)
 			{
-				if (doc)
+				if (user)
 				{
 					util.debug('[' + 'mongodb'.error.strong + '] Could not add "' + data.username.toString().player.strong + '" because the name is reserved by another user.');
 				}
 				else
 				{
-					users.insert({user: data.username, pass : data.password}, function (err)
+					UserModel.push({user: data.username, pass : data.password}, function (err)
 					{
 						if (err)
 							util.debug('[' + 'mongodb'.error.strong + '] ' + err);
@@ -103,7 +102,8 @@ var cmdUsers =
 							util.log('Done.');
 					});
 				}
-			});				
+			});
+			
 		}
 	},
 	{
@@ -112,15 +112,15 @@ var cmdUsers =
 		help: "users remove ".strong + "<username>".argument.strong + "\t\tRemoves a user from to the database",
 		callback: function(data)
 		{
-			var users = dbclient.collection('users');
 			util.log('Removing user "' + data.username.toString().player.strong  + '" from the database...');
 			
-			users.remove({user: data.username}, function (err, res)
+			var UserModel = mongoose.model('User');
+			UserModel.remove({user: data.username}, function (err, res)
 			{
 				if (err)
 					util.debug('[' + 'mongodb'.error.strong + '] ' + err);
-				else if (!res)
-					util.debug('[' + 'mongodb'.error.strong + '] Could not find "' + data.username.toString().player.strong + '" username in the database.');
+				/*else if (!res)
+					util.debug('[' + 'mongodb'.error.strong + '] Could not find "' + data.username.toString().player.strong + '" username in the database.');*/
 				else
 					util.log('Done.');
 			});
@@ -151,8 +151,6 @@ var cmdExit =
 cli.on('close', function()
 {
 	util.log("Exiting server...");
-	
-	dbclient.close();
 
 	process.exit(0);
 	process.stdin.destroy();
@@ -162,7 +160,7 @@ var hall = new Room('hall');
 
 server.on('userConnected', function (user)
 {
-	console.log(user.username.toString().player.bold + " has joined (" + user.stream.remoteAddress.toString().info.bold + ").");
+	console.log(user.model.name.toString().player.bold + " has joined (" + user.stream.remoteAddress.toString().info.bold + ").");
 	
 	user.gotoRoom(hall);
 	user.send(utils.ClearScreen + 'Welcome to the '.white + 'HaCker$'.info.strong + ' server ! '.white + utils.NewLine + utils.NewLine + 'Type '.white + 'help'.command.strong + ' to get a list of available commands.'.white + utils.NewLine);
@@ -173,23 +171,24 @@ server.on('userConnected', function (user)
 		help: "login".bold + "\t" + "<username> <password>".bold.cyan + "\tAdd a unique user to the database",
 		callback: function(data, sender)
 		{
+			
 			var sha1 = crypto.createHash('sha1');
 			sha1.update(data.password);
-			
-			var users = dbclient.collection('users');
 			data.password = sha1.digest('hex');
 			
-			users.findOne({user: data.username, pass: data.password}, function (err, res)
+			var UserModel = mongoose.model('User');
+			var query = UserModel.findOne({user: data.username, pass: data.password}, function (err, user)
 			{
-				if (res)
+				if (user)
 				{
-					var lastUsername = user.username;
+					var lastUsername = user.name;
 					user.username = data.username;
-					user._id = res._id;
 					user.send('[' + 'server'.strong.info + '] ' + 'You are now logged as ' + data.username.player.strong + ' ! ');
 				}
 				else
+				{
 					user.send('[' + 'server'.strong.error + '] ' + 'Authentication failed.');
+				}
 			});
 		}
 	}]);
@@ -197,7 +196,7 @@ server.on('userConnected', function (user)
 
 server.on('userDisconnected', function (user)
 {
-	console.log(user.username.toString().player.bold + " has left.");
+	console.log(user.model.name.toString().player.bold + " has left.");
 	user = null;
 });
 
