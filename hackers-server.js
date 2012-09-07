@@ -16,9 +16,6 @@ var util = require('util'),
 	Room = require("./lib/Room.js"),
 	mongoose = require('mongoose'),
 	CLI = require("./lib/CLI.js");
-	
-var pack = require("./package.json");
-
 
 /* Initialize the mongodb driver */
 var db = mongoose.createConnection('localhost', 'hackers', 27017);
@@ -177,11 +174,10 @@ server.on('userConnected', function (user)
 			data.password = sha1.digest('hex');
 			
 			var UserModel = mongoose.model('User');
-			var query = UserModel.findOne({user: data.username, pass: data.password}, function (err, user)
+			UserModel.findOne({user: data.username, pass: data.password}, function (err, user)
 			{
 				if (user)
 				{
-					var lastUsername = user.name;
 					user.username = data.username;
 					user.send('[' + 'server'.strong.info + '] ' + 'You are now logged as ' + data.username.player.strong + ' ! ');
 				}
