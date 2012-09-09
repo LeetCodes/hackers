@@ -29,11 +29,16 @@
 	
 	"dependencies":
 	{
-		"colors" : "*",
-		"xregexp" : "*",
-		"mongodb" : "*",
-		"mongoose" : "*",
-		"iconv-lite" : "*"
+		"colorize":"",
+		"js-yaml":"",
+		"localize":"",
+		"node-uuid":"",
+		"optimist":"",
+		"sprintf":"",
+		"sty":"",
+		"yaml":"",
+		"express":"",
+		"jade":""
 	},
 	
 	"devDependencies":

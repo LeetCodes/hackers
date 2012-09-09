@@ -1,0 +1,10 @@
+LEAVE:
+    en: "$[1] leaves."
+    es: "ES-$[1] leaves."
+AMBIG_EXIT:
+    en: "Which one? Be more specific."
+    es: "ES-Which one? Be more specific."
+MOVE_COMBAT:
+    en: "Where do you think you're going in the middle of a fight?"
+    es: "ES-Where do you think you're going in the middle of a fight?"
+# vim: set ts=4 sw=4 et :
