@@ -35,7 +35,7 @@ var telnet = require('../src/3rdparty/telnet.js');
  */
 	// cmdline options
 var locale  = argv.locale || 'en';
-var port    = argv.port || 23;
+var port    = parseInt(argv.port || process.env.PORT || 23, 10);
 var verbose = !!argv.v;
 var save_interval    = isNaN(parseInt(argv.save, 10)) ? 10 : parseInt(argv.save, 10); // number of minutes between autosave ticks
 var respawn_interval = isNaN(parseInt(argv.respawn, 10)) ? 20 : parseInt(argv.respawn, 10); // "" between respawn tickets

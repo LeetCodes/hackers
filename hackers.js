@@ -35,7 +35,7 @@ var util = require('util'),
  */
 	// cmdline options
 var locale  = argv.locale || 'en',
-	port    = argv.port || 23,
+	port    = parseInt(argv.port || process.env.PORT || 23, 10),
     verbose = !!argv.v,
 	save_interval    = isNaN(parseInt(argv.save, 10)) ? 10 : parseInt(argv.save, 10), // number of minutes between autosave ticks
 	respawn_interval = isNaN(parseInt(argv.respawn, 10)) ? 20 : parseInt(argv.respawn, 10), // "" between respawn tickets
