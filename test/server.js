@@ -12,43 +12,43 @@
  */
 
 
-    // built-ins
-var util = require('util'),
+// built-ins
+var util = require('util');
 
-    // local
-    Commands = require('../src/commands').Commands,
-    Rooms    = require('../src/rooms').Rooms,
-    Npcs     = require('../src/npcs').Npcs,
-    Items    = require('../src/items').Items,
-    Events   = require('../src/events').Events,
-	Plugins  = require('../src/plugins'),
-    PlayerManager = require('../src/player_manager').PlayerManager,
+// local
+var Commands = require('../src/commands').Commands;
+var Rooms    = require('../src/rooms').Rooms;
+var Npcs     = require('../src/npcs').Npcs;
+var Items    = require('../src/items').Items;
+var Events   = require('../src/events').Events;
+var Plugins  = require('../src/plugins');
+var PlayerManager = require('../src/player_manager').PlayerManager;
 
-    // third party
-    Localize  = require('localize'),
-    argv = require('optimist').argv,
-    telnet = require('../src/3rdparty/telnet.js');
+// third party
+var Localize  = require('localize');
+var argv = require('optimist').argv;
+var telnet = require('../src/3rdparty/telnet.js');
 
 /**
  * These aren't really globals, they're only "global" to this file,
  * we'll pass them around via construction as needed
  */
 	// cmdline options
-var locale  = argv.locale || 'en',
-	port    = argv.port || 23,
-    verbose = !!argv.v,
-	save_interval    = isNaN(parseInt(argv.save, 10)) ? 10 : parseInt(argv.save, 10), // number of minutes between autosave ticks
-	respawn_interval = isNaN(parseInt(argv.respawn, 10)) ? 20 : parseInt(argv.respawn, 10), // "" between respawn tickets
+var locale  = argv.locale || 'en';
+var port    = argv.port || 23;
+var verbose = !!argv.v;
+var save_interval    = isNaN(parseInt(argv.save, 10)) ? 10 : parseInt(argv.save, 10); // number of minutes between autosave ticks
+var respawn_interval = isNaN(parseInt(argv.respawn, 10)) ? 20 : parseInt(argv.respawn, 10); // "" between respawn tickets
 
-	//storage of main game entities
-	players,
-	rooms = new Rooms(),
-	items = new Items(),
-	npcs  = new Npcs(),
-	server,
+//storage of main game entities
+var players;
+var rooms = new Rooms();
+var items = new Items();
+var npcs = new Npcs();
+var server;
 	
-	// Stuff for the server executable
-	l10n;
+// Stuff for the server executable
+var l10n;
 
 /**
  * Do the dirty work
@@ -287,4 +287,3 @@ process.stdin.on('data', function (data)
 
 	server_commands[command](data.split(' ').slice(1).join(' '));
 });
-// vim: set syn=javascript :
