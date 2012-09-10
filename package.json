@@ -4,7 +4,7 @@
 
 	"description": "A MUD server and a client for a role-playing game in a futurist world",
 	"homepage" : "https://github.com/robinouu/hackers",
-	"keywords": ["mud server", "mud client", "rpg", "game", "cli"],
+	"keywords": ["mud server", "rpg", "game", "cli"],
 
 	"author":
 	{
@@ -37,8 +37,6 @@
 		"sprintf":"",
 		"sty":"",
 		"yaml":"",
-		"express":"",
-		"jade":""
 	},
 	
 	"devDependencies":
@@ -53,8 +51,8 @@
 	
 	"scripts":
 	{
-		"test": "node_modules/.bin/mocha --globals hasCert"
+		"test": "node_modules/.bin/mocha"
 	},
 	
-	"main": "./hackers-server.js"
+	"main": "./hackers.js"
 }

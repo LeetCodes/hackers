@@ -8,22 +8,22 @@ var behaviors_dir      = __dirname + '/../scripts/behaviors/';
 var behaviors_l10n_dir = __dirname + '/../l10n/scripts/behaviors/';
 
 var Data = {
-	/**
-	 * load the MOTD for the intro screen
-	 * @return string
-	 */
+/**
+ * load the MOTD for the intro screen
+ * @return string
+ */
 	loadMotd : function ()
 	{
 		var motd = fs.readFileSync(data_path + 'motd').toString('utf8');
 		return motd;
 	},
 
-	/**
-	 * Load a player's pfile.
-	 * This does not instantiate a player, it simply returns data
-	 * @param string name Player's name
-	 * @return object
-	 */
+/**
+ * Load a player's pfile.
+ * This does not instantiate a player, it simply returns data
+ * @param string name Player's name
+ * @return object
+ */
 	loadPlayer : function (name)
 	{
 		var playerpath = data_path + 'players/' + name + '.json';
@@ -37,12 +37,12 @@ var Data = {
 		return JSON.parse(fs.readFileSync(playerpath).toString('utf8'));
 	},
 
-	/**
-	 * Save a player
-	 * @param Player player
-	 * @param function callback
-	 * @return boolean
-	 */
+/**
+ * Save a player
+ * @param Player player
+ * @param function callback
+ * @return boolean
+ */
 	savePlayer: function (player, callback)
 	{
 		fs.writeFileSync(data_path + 'players/' + player.getName() + '.json', player.stringify(), 'utf8');
@@ -51,13 +51,13 @@ var Data = {
 		}
 	},
 
-	/**
-	 * Load and set listeners onto an object
-	 * @param object config
-	 * @param string l10n_dir
-	 * @param object target
-	 * @return object The applied target
-	 */
+/**
+ * Load and set listeners onto an object
+ * @param object config
+ * @param string l10n_dir
+ * @param object target
+ * @return object The applied target
+ */
 	loadListeners: function (config, l10n_dir, scripts_dir, target)
 	{
 		// Check to see if the target has scripts, if so load them
@@ -76,13 +76,13 @@ var Data = {
 		return target;
 	},
 
-	/**
-	 * Load and set behaviors (predefined sets of listeners) onto an object
-	 * @param object config
-	 * @param string subdir The subdirectory of behaviors_dir which the behaviors live
-	 * @param object target
-	 * @return object The applied target
-	 */
+/**
+ * Load and set behaviors (predefined sets of listeners) onto an object
+ * @param object config
+ * @param string subdir The subdirectory of behaviors_dir which the behaviors live
+ * @param object target
+ * @return object The applied target
+ */
 	loadBehaviors: function (config, subdir, target)
 	{
 		if ('behaviors' in config) {
@@ -101,7 +101,7 @@ var Data = {
 		}
 
 		return target;
-	},
+	}
 };
 
 exports.Data = Data;

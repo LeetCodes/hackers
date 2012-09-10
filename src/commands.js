@@ -1,9 +1,8 @@
 var util = require('util'),
     ansi = require('sty').parse,
     fs = require('fs'),
-
-    CommandUtil = require('./command_util').CommandUtil;
-	l10nHelper  = require('./l10n');
+    l10nHelper  = require('./l10n');
+    
 var rooms   = null;
 var players = null;
 var items   = null;
@@ -27,16 +26,16 @@ var commands_dir = __dirname + '/../commands/';
 var Commands = {
 	player_commands : {},
 
-	/**
-	 * Configure the commands by using a joint players/rooms array
-	 * and loading the l10n. The config object should look similar to
-	 * {
-	 *   rooms: instanceOfRoomsHere,
-	 *   players: instanceOfPlayerManager,
-	 *   locale: 'en'
-	 * }
-	 * @param object config
-	 */
+/**
+ * Configure the commands by using a joint players/rooms array
+ * and loading the l10n. The config object should look similar to
+ * {
+ *   rooms: instanceOfRoomsHere,
+ *   players: instanceOfPlayerManager,
+ *   locale: 'en'
+ * }
+ * @param object config
+ */
 	configure : function (config)
 	{
 		rooms   = config.rooms;
@@ -49,12 +48,12 @@ var Commands = {
 		l10n.setLocale(config.locale);
 		util.log("Done");
 
-		/**
-		 * Hijack translate to also do coloring
-		 * @param string text
-		 * @param ...
-		 * @return string
-		 */
+/**
+ * Hijack translate to also do coloring
+ * @param string text
+ * @param ...
+ * @return string
+ */
 		L = function (text) {
 			return ansi(l10n.translate.apply(null, [].slice.call(arguments)));
 		};
@@ -64,7 +63,7 @@ var Commands = {
 		fs.readdir(commands_dir, function (err, files)
 		{
 			// Load any npc files
-			for (j in files) {
+			for (var j in files) {
 				var command_file = commands_dir + files[j];
 				if (!fs.statSync(command_file).isFile()) continue;
 				if (!command_file.match(/js$/)) continue;
@@ -76,14 +75,14 @@ var Commands = {
 		});
 	},
 
-	/**
-	 * Command wasn't an actual command so scan for exits in the room
-	 * that have the same name as the command typed. Skills will likely
-	 * follow the same structure
-	 * @param string exit direction they tried to go
-	 * @param Player player
-	 * @return boolean
-	 */
+/**
+ * Command wasn't an actual command so scan for exits in the room
+ * that have the same name as the command typed. Skills will likely
+ * follow the same structure
+ * @param string exit direction they tried to go
+ * @param Player player
+ * @return boolean
+ */
 	room_exits : function (exit, player)
 	{
 		var room = rooms.getAt(player.getLocation());
@@ -93,8 +92,9 @@ var Commands = {
 		}
 
 		var exits = room.getExits().filter(function (e) {
-			try {
-				var regex = new RegExp("^" + exit);
+			var regex;
+            try {
+				regex = new RegExp("^" + exit);
 			}
 			catch(err) {
 				return false;
@@ -169,8 +169,7 @@ function move (exit, player)
 	});
 
 	room.emit('playerEnter', player, players);
-
-};
+}
 
 /**
  * Alias commands
@@ -180,6 +179,6 @@ function move (exit, player)
 function alias (name, target)
 {
 	Commands.player_commands[name] = function () {
-		Commands.player_commands[target].apply(null, [].slice.call(arguments))
+		Commands.player_commands[target].apply(null, [].slice.call(arguments));
 	};
-};
+}

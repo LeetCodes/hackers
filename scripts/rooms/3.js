@@ -4,6 +4,6 @@ exports.listeners = {
 		return function (player, players)
 		{
 			players.broadcastAtL10n(player, l10n, 'SLIDE', player.getName());
-		}
+		};
 	}
 };

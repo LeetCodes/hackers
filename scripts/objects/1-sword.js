@@ -5,13 +5,13 @@ exports.listeners = {
 		{
 			player.sayL10n(l10n, 'WIELD');
 			player.equip(location, this);
-		}
+		};
 	},
 	remove: function (l10n)
 	{
 		return function (player)
 		{
 			player.sayL10n(l10n, 'REMOVE');
-		}
-	},
+		};
+	}
 };

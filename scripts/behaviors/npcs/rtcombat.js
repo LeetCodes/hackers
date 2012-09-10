@@ -5,7 +5,7 @@ exports.listeners = {
 		return function (player, room, players, npcs, callback)
 		{
 			initiate_combat(l10n, this, player, room, npcs, callback);
-		}
+		};
 	}
 };
 
@@ -37,9 +37,9 @@ function initiate_combat (l10n, npc, player, room, npcs, callback)
 			if (weapon) {
 				weapon.emit('parry', player);
 			}
-			player.sayL10n(l10n, 'NPC_MISS', npc.getShortDesc(player.getLocale()), damage)
+			player.sayL10n(l10n, 'NPC_MISS', npc.getShortDesc(player.getLocale()), damage);
 		} else {
-			player.sayL10n(l10n, 'DAMAGE_TAKEN', npc.getShortDesc(player.getLocale()), damage)
+			player.sayL10n(l10n, 'DAMAGE_TAKEN', npc.getShortDesc(player.getLocale()), damage);
 		}
 
 		player.setAttribute('health', player_health - damage);
@@ -51,7 +51,7 @@ function initiate_combat (l10n, npc, player, room, npcs, callback)
 		player.combatPrompt({
 			target_name: npc.getShortDesc(player.getLocale()),
 			target_max_health: npc.getAttribute('max_health'),
-			target_health: npc.getAttribute('health'),
+			target_health: npc.getAttribute('health')
 		});
 
 		setTimeout(npc_combat, npc.getAttackSpeed() * 1000);
@@ -73,12 +73,12 @@ function initiate_combat (l10n, npc, player, room, npcs, callback)
 			if (weapon) {
 				weapon.emit('miss', player);
 			}
-			player.sayL10n(l10n, 'PLAYER_MISS', npc.getShortDesc(player.getLocale()), damage)
+			player.sayL10n(l10n, 'PLAYER_MISS', npc.getShortDesc(player.getLocale()), damage);
 		} else {
 			if (weapon) {
 				weapon.emit('hit', player);
 			}
-			player.sayL10n(l10n, 'DAMAGE_DONE', npc.getShortDesc(player.getLocale()), damage)
+			player.sayL10n(l10n, 'DAMAGE_DONE', npc.getShortDesc(player.getLocale()), damage);
 		}
 
 		npc.setAttribute('health', npc_health - damage);
@@ -89,7 +89,7 @@ function initiate_combat (l10n, npc, player, room, npcs, callback)
 		player.combatPrompt({
 			target_name: npc.getShortDesc(player.getLocale()),
 			target_max_health: npc.getAttribute('max_health'),
-			target_health: npc.getAttribute('health'),
+			target_health: npc.getAttribute('health')
 		});
 
 		setTimeout(player_combat, player.getAttackSpeed() * 1000);

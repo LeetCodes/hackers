@@ -2,7 +2,7 @@ var Data    = require('./data').Data,
     Skills  = require('./skills').Skills,
     crypto  = require('crypto'),
     ansi    = require('sty'),
-    util    = require('util');
+    util    = require('util'),
     events  = require('events');
 
 
@@ -15,8 +15,7 @@ var Player = function(socket) {
 	self.location = null;
 	self.locale   = null;
 	self.prompt_string = '%health/%max_healthHP>';
-	self.combat_prompt =
-	   "<bold>[%health/%max_healthHP] 0--{======> %target_name: [%target_health/%target_max_health]</bold>\r\n>";
+	self.combat_prompt = "<bold>[%health/%max_healthHP] 0--{======> %target_name: [%target_health/%target_max_health]</bold>\r\n>";
 	self.password = null;
 	self.inventory = [];
 	self.equipment = {};
@@ -41,9 +40,9 @@ var Player = function(socket) {
 	self.skills = {
 	};
 
-	/**#@+
-	 * Mutators
-	 */
+/**#@+
+ * Mutators
+ */
 	self.getPrompt       = function () { return self.prompt_string; };
 	self.getCombatPrompt = function () { return self.combat_prompt; };
 	self.getLocale       = function () { return self.locale; };
@@ -56,8 +55,8 @@ var Player = function(socket) {
 	// Note, only retreives hash, not a real password
 	self.getPassword     = function () { return self.password; };
 	self.isInCombat      = function () { return self.in_combat; };
-	self.setPrompt       = function (str)       { self.prompt_string = str; }
-	self.setCombatPrompt = function (str)       { self.combat_prompt = str; }
+	self.setPrompt       = function (str)       { self.prompt_string = str; };
+	self.setCombatPrompt = function (str)       { self.combat_prompt = str; };
 	self.setLocale       = function (locale)    { self.locale = locale; };
 	self.setName         = function (newname)   { self.name = newname; };
 	self.setLocation     = function (loc)       { self.location = loc; };
@@ -70,11 +69,11 @@ var Player = function(socket) {
 	self.addSkill        = function (name, skill) { self.skills[name] = skill; };
 	/**#@-*/
 
-	/**
-	 * Get currently applied affects
-	 * @param string aff
-	 * @return Array|Object
-	 */
+/**
+ * Get currently applied affects
+ * @param string aff
+ * @return Array|Object
+ */
 	self.getAffects = function (aff)
 	{
 		if (aff) {
@@ -83,11 +82,11 @@ var Player = function(socket) {
 		return self.affects;
 	};
 
-	/**
-	 * Add, activate and set a timer for an affect
-	 * @param string name
-	 * @param object affect
-	 */
+/**
+ * Add, activate and set a timer for an affect
+ * @param string name
+ * @param object affect
+ */
 	self.addAffect = function (name, affect)
 	{
 		if (affect.activate) {
@@ -120,12 +119,12 @@ var Player = function(socket) {
 		delete self.affects[aff];
 	};
 
-	/**
-	 * Get and possibly hydrate an equipped item
-	 * @param string  slot    Slot the item is equipped in
-	 * @param boolean hydrate Return an actual item or just the uuid
-	 * @return string|Item
-	 */
+/**
+ * Get and possibly hydrate an equipped item
+ * @param string  slot    Slot the item is equipped in
+ * @param boolean hydrate Return an actual item or just the uuid
+ * @return string|Item
+ */
 	self.getEquipped = function (slot, hydrate)
 	{
 		if (!slot) {
@@ -143,21 +142,21 @@ var Player = function(socket) {
 		return self.equipment[slot];
 	};
 
-	/**
-	 * "equip" an item
-	 * @param string wear_location The location this item is worn
-	 * @param Item   item
-	 */
+/**
+ * "equip" an item
+ * @param string wear_location The location this item is worn
+ * @param Item   item
+ */
 	self.equip = function (wear_location, item)
 	{
 		self.equipment[wear_location] = item.getUuid();
 		item.setEquipped(true);
 	};
 
-	/**
-	 * "unequip" an item
-	 * @param Item   item
-	 */
+/**
+ * "unequip" an item
+ * @param Item   item
+ */
 	self.unequip = function (item)
 	{
 		item.setEquipped(false);
@@ -170,10 +169,10 @@ var Player = function(socket) {
 		item.emit('remove', self);
 	};
 
-	/**
-	 * Write to a player's socket
-	 * @param string data Stuff to write
-	 */
+/**
+ * Write to a player's socket
+ * @param string data Stuff to write
+ */
 	self.write = function (data, color)
 	{
 		color = color || true;
@@ -182,12 +181,12 @@ var Player = function(socket) {
 		ansi.enable();
 	};
 
-	/**
-	 * Write based on player's locale
-	 * @param Localize l10n
-	 * @param string   key
-	 * @param ...
-	 */
+/**
+ * Write based on player's locale
+ * @param Localize l10n
+ * @param string   key
+ * @param ...
+ */
 	self.writeL10n = function (l10n, key)
 	{
 		var locale = l10n.locale;
@@ -200,10 +199,10 @@ var Player = function(socket) {
 		if (locale) l10n.setLocale(locale);
 	};
 
-	/**
-	 * write() + newline
-	 * @see self.write
-	 */
+/**
+ * write() + newline
+ * @see self.write
+ */
 	self.say = function (data, color)
 	{
 		color = color || true;
@@ -212,10 +211,10 @@ var Player = function(socket) {
 		ansi.enable();
 	};
 
-	/**
-	 * writeL10n() + newline
-	 * @see self.writeL10n
-	 */
+/**
+ * writeL10n() + newline
+ * @see self.writeL10n
+ */
 	self.sayL10n = function (l10n, key)
 	{
 		var locale = l10n.locale;
@@ -227,10 +226,10 @@ var Player = function(socket) {
 		if (locale) l10n.setLocale(locale);
 	};
 
-	/**
-	 * Display the configured prompt to the player
-	 * @param object extra Other data to show
-	 */
+/**
+ * Display the configured prompt to the player
+ * @param object extra Other data to show
+ */
 	self.prompt = function (extra)
 	{
 		extra = extra || {};
@@ -248,9 +247,9 @@ var Player = function(socket) {
 		self.write("\r\n" + pstring);
 	};
 
-	/**
-	 * @see self.prompt
-	 */
+/**
+ * @see self.prompt
+ */
 	self.combatPrompt = function (extra)
 	{
 		extra = extra || {};
@@ -269,11 +268,11 @@ var Player = function(socket) {
 	};
 
 
-	/**
-	 * Not really a "load" as much as a constructor but we really need any
-	 * of this stuff when we create a player, so make a separate method for it
-	 * @param object data Object should have all the things a player needs. Like spinach.
-	 */
+/**
+ * Not really a "load" as much as a constructor but we really need any
+ * of this stuff when we create a player, so make a separate method for it
+ * @param object data Object should have all the things a player needs. Like spinach.
+ */
 	self.load = function (data)
 	{
 		self.name     = data.name;
@@ -294,32 +293,32 @@ var Player = function(socket) {
 
 	};
 
-	/**
-	 * Save the player... who'da thunk it.
-	 * @param function callback
-	 */
+/**
+ * Save the player... who'da thunk it.
+ * @param function callback
+ */
 	self.save = function (callback)
 	{
 		Data.savePlayer(self, callback);
 	};
 
-	/**
-	 * Get attack speed of a player
-	 * @return float
-	 */
+/**
+ * Get attack speed of a player
+ * @return float
+ */
 	self.getAttackSpeed = function ()
 	{
-		var weapon = self.getEquipped('wield', true)
+		var weapon = self.getEquipped('wield', true);
 		return weapon ? (weapon.getAttribute('speed') || 1) : 1;
 	};
 
-	/**
-	 * Get the damage a player can do
-	 * @return int
-	 */
+/**
+ * Get the damage a player can do
+ * @return int
+ */
 	self.getDamage = function ()
 	{
-		var weapon = self.getEquipped('wield', true)
+		var weapon = self.getEquipped('wield', true);
 		var base = [1, 20];
 		var damage = weapon ? 
 			(weapon.getAttribute('damage') ?
@@ -330,10 +329,10 @@ var Player = function(socket) {
 		return {min: damage[0], max: damage[1]};
 	};
 
-	/**
-	 * Turn the player into a JSON string for storage
-	 * @return string
-	 */
+/**
+ * Turn the player into a JSON string for storage
+ * @return string
+ */
 	self.stringify = function ()
 	{
 		var inv = [];
@@ -355,18 +354,18 @@ var Player = function(socket) {
 		});
 	};
 
-	/**
-	 * Players will have some defined events so load them on creation
-	 */
+/**
+ * Players will have some defined events so load them on creation
+ */
 	self.init = function ()
 	{
 		Data.loadListeners({script: "player.js"}, l10n_dir, npcs_scripts_dir, self);
 	};
 
-	/**
-	 * Helper to activate skills
-	 * @param string skill
-	 */
+/**
+ * Helper to activate skills
+ * @param string skill
+ */
 	self.useSkill = function (skill/*, args... */)
 	{
 		Skills[self.getAttribute('class')][skill].activate.apply(null, [].slice.call(arguments).slice(1));

@@ -7,7 +7,6 @@ var crypto   = require('crypto'),
     Data     = require('./data').Data,
     Item     = require('./items').Item,
     Player   = require('./player').Player,
-	Skills   = require('./skills').Skills,
 	l10nHelper = require('./l10n');
 
 
@@ -34,16 +33,16 @@ var password_attempts = {};
 */
 var gen_next = function (event)
 {
-	/**
-	 * Move to the next stage of a staged event
-	 * @param Socket|Player arg       Either a Socket or Player on which emit() will be called
-	 * @param string        nextstage
-	 * @param ...
-	 */
+/**
+ * Move to the next stage of a staged event
+ * @param Socket|Player arg       Either a Socket or Player on which emit() will be called
+ * @param string        nextstage
+ * @param ...
+ */
 	return function (arg, nextstage) {
-		func = (arg instanceof Player ? arg.getSocket() : arg);
+		var func = (arg instanceof Player ? arg.getSocket() : arg);
 		func.emit.apply(func, [event].concat([].slice.call(arguments)));
-	}
+	};
 };
 
 /**
@@ -53,7 +52,7 @@ var gen_next = function (event)
  */
 var gen_repeat = function (repeat_args, next)
 {
-	return function () { next.apply(null, [].slice.call(repeat_args)) };
+	return function () { next.apply(null, [].slice.call(repeat_args)); };
 };
 
 /**
@@ -63,15 +62,15 @@ var gen_repeat = function (repeat_args, next)
  * See login or createPlayer for examples
  */
 var Events = {
-	/**
-	 * Container for events
-	 * @var object
-	 */
+/**
+ * Container for events
+ * @var object
+ */
 	events: {
-		/**
-		 * Point of entry for the player. They aren't actually a player yet
-		 * @param Socket socket
-		 */
+/**
+ * Point of entry for the player. They aren't actually a player yet
+ * @param Socket socket
+ */
 		login : function(arg, stage, dontwelcome, name)
 		{
 			// dontwelcome is used to swallow telnet bullshit
@@ -114,7 +113,7 @@ var Events = {
 						return;
 					}
 
-					var name = name.toString().trim();
+					name = name.toString().trim();
 					if (/[^a-z]/i.test(name) || !name) {
 						arg.write("That's not really your name, now is it?\r\n");
 						return repeat();
@@ -169,7 +168,7 @@ var Events = {
 				});
 				break;
 			case 'done':
-				var name = dontwelcome;
+				name = dontwelcome;
 				// If there is a player connected with the same name boot them the heck off
 				if (players.some(function (p) { return p.getName() === name; })) {
 					players.eachIf(function (p) { return p.getName() === name; }, function (p) {
@@ -179,7 +178,7 @@ var Events = {
 					});
 				}
 
-				player = new Player(arg);
+				var player = new Player(arg);
 				player.load(Data.loadPlayer(name));
 				players.addPlayer(player);
 
@@ -202,13 +201,13 @@ var Events = {
 				// All that shit done, let them play!
 				player.getSocket().emit("commands", player);
 				break;
-			};
+			}
 		},
 
-		/**
-		 * Command loop
-		 * @param Player player
-		 */
+/**
+ * Command loop
+ * @param Player player
+ */
 		commands : function(player)
 		{
 			// Parse order is commands -> exits -> skills -> channels
@@ -227,8 +226,9 @@ var Events = {
 
 						var found = false;
 						for (var cmd in Commands.player_commands) {
-							try {
-								var regex = new RegExp("^" + command);
+							var regex;
+                            try {
+								regex = new RegExp("^" + command);
 							}
 							catch(err) {
 								continue;
@@ -268,20 +268,20 @@ var Events = {
 			});
 		},
 
-		/**
-		 * Create a player
-		 * Stages:
-		 *   check:  See if they actually want to create a player or not
-		 *   locale: Get the language they want to play in so we can give them
-		 *           the rest of the creation process in their language
-		 *   name:   ... get there name
-		 *   done:   This is always the end step, here we register them in with
-		 *           the rest of the logged in players and where they log in
-		 *
-		 * @param object arg This is either a Socket or a Player depending on
-		 *                  the stage.
-		 * @param string stage See above
-		 */
+/**
+ * Create a player
+ * Stages:
+ *   check:  See if they actually want to create a player or not
+ *   locale: Get the language they want to play in so we can give them
+ *           the rest of the creation process in their language
+ *   name:   ... get there name
+ *   done:   This is always the end step, here we register them in with
+ *           the rest of the logged in players and where they log in
+ *
+ * @param object arg This is either a Socket or a Player depending on
+ *                  the stage.
+ * @param string stage See above
+ */
 		createPlayer : function (arg, stage)
 		{
 			stage = stage || 'check';
@@ -293,10 +293,11 @@ var Events = {
 			var next   = gen_next('createPlayer');
 			var repeat = gen_repeat(arguments, next);
 
-			/* Multi-stage character creation i.e., races, classes, etc.
-			 * Always emit 'done' in your last stage to keep it clean
-			 * Also try to put the cases in order that they happen during creation
-			 */
+/**
+ * Multi-stage character creation i.e., races, classes, etc.
+ * Always emit 'done' in your last stage to keep it clean
+ * Also try to put the cases in order that they happen during creation
+ */
 			switch (stage)
 			{
 			case 'check':
@@ -406,12 +407,12 @@ var Events = {
 		}
 		l10n.setLocale(config.locale);
 
-		/**
-		 * Hijack translate to also do coloring
-		 * @param string text
-		 * @param ...
-		 * @return string
-		 */
+/**
+ * Hijack translate to also do coloring
+ * @param string text
+ * @param ...
+ * @return string
+ */
 		L = function (text) {
 			return ansi(l10n.translate.apply(null, [].slice.call(arguments)));
 		};

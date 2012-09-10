@@ -69,7 +69,7 @@ exports.command = function (rooms, items, players, npcs, Commands)
 						color = 'yellow';
 						break;
 					default:
-						color = 'green'
+						color = 'green';
 						break;
 				}
 				player.say('<b><'+color+'>' + npcs.get(id).getShortDesc(player.getLocale()) + '</'+color+'></b>');
@@ -79,15 +79,11 @@ exports.command = function (rooms, items, players, npcs, Commands)
 		player.write('[');
 		player.writeL10n(l10n, 'EXITS');
 		
-		c = ': <b><cyan>';
+		var c = ': <b><cyan>';
 		room.getExits().forEach(function (exit) {
-			//player.write(exit.direction + ' ');
 			c += exit.direction + ' ';
 		});
-		
-		//player.say('</cyan></b>]');
-		
 		c += '</cyan></b>]';
 		player.say(c);
-	}
+	};
 };

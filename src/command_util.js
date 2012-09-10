@@ -1,13 +1,13 @@
 var CommandUtil = {
-	/**
-	 * Find an item in a room based on the syntax
-	 *   things like: get 2.thing or look 6.thing or look thing
-	 * @param string lookString
-	 * @param Room   room
-	 * @param Player player
-	 * @param boolean hydrade Whether to return the id or a full object
-	 * @return string UUID of the item
-	 */
+/**
+ * Find an item in a room based on the syntax
+ *   things like: get 2.thing or look 6.thing or look thing
+ * @param string lookString
+ * @param Room   room
+ * @param Player player
+ * @param boolean hydrade Whether to return the id or a full object
+ * @return string UUID of the item
+ */
 	findItemInRoom : function (items, lookString, room, player, hydrate)
 	{
 		hydrate = hydrate || false;
@@ -18,15 +18,15 @@ var CommandUtil = {
 		return thing ? (hydrate ? items.get(thing) : thing) : false;
 	},
 
-	/**
-	 * Find an npc in a room based on the syntax
-	 *   things like: get 2.thing or look 6.thing or look thing
-	 * @param string lookString
-	 * @param Room   room
-	 * @param Player player
-	 * @param boolean hydrade Whether to return the id or a full object
-	 * @return string UUID of the item
-	 */
+/**
+ * Find an npc in a room based on the syntax
+ *   things like: get 2.thing or look 6.thing or look thing
+ * @param string lookString
+ * @param Room   room
+ * @param Player player
+ * @param boolean hydrade Whether to return the id or a full object
+ * @return string UUID of the item
+ */
 	findNpcInRoom : function (npcs, lookString, room, player, hydrate)
 	{
 		hydrate = hydrate || false;
@@ -37,13 +37,13 @@ var CommandUtil = {
 		return thing ? (hydrate ? npcs.get(thing) : thing) : false;
 	},
 
-	/**
-	 * Find an item in a room based on the syntax
-	 *   things like: get 2.thing or look 6.thing or look thing
-	 * @param string lookString
-	 * @param object being This could be a player or NPC. Though most likely player
-	 * @return string UUID of the item
-	 */
+/**
+ * Find an item in a room based on the syntax
+ *   things like: get 2.thing or look 6.thing or look thing
+ * @param string lookString
+ * @param object being This could be a player or NPC. Though most likely player
+ * @return string UUID of the item
+ */
 	findItemInInventory : function (lookString, being, hydrate)
 	{
 		hydrate = hydrate || false;
@@ -54,13 +54,13 @@ var CommandUtil = {
 		return thing ? (hydrate ? thing : thing.getUuid()) : false;
 	},
 
-	/**
-	* Parse 3.blah item notation
-	* @param string arg    The actual 3.blah string
-	* @param Array objects The array of objects to search in
-	* @param Function filterFunc Function to filter the list
-	* @return object
-	*/
+/**
+ * Parse 3.blah item notation
+ * @param string arg    The actual 3.blah string
+ * @param Array objects The array of objects to search in
+ * @param Function filterFunc Function to filter the list
+ * @return object
+*/
 	parseDot : function (arg, objects, filterFunc)
 	{
 		var keyword = arg.split(' ')[0];
@@ -70,7 +70,7 @@ var CommandUtil = {
 		if (/^\d+\./.test(keyword)) {
 			nth = parseInt(keyword.split('.')[0], 10);
 			keyword = keyword.split('.')[1];
-			multi = true
+			multi = true;
 		}
 
 		var found = objects.filter(filterFunc, {
@@ -90,7 +90,7 @@ var CommandUtil = {
 		}
 
 		return item;
-	},
+	}
 };
 
 exports.CommandUtil = CommandUtil;

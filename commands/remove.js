@@ -5,7 +5,7 @@ exports.command = function (rooms, items, players, npcs, Commands)
 {
 	return function (args, player)
 	{
-		thing = CommandUtil.findItemInInventory(args.split(' ')[0], player, true);
+		var thing = CommandUtil.findItemInInventory(args.split(' ')[0], player, true);
 		if (!thing) {
 			player.sayL10n(l10n, 'ITEM_NOT_FOUND');
 			return;

@@ -18,7 +18,7 @@ exports.listeners = {
 					clearInterval(regen);
 				}
 			}, 2000);
-		}
+		};
 	},
 	experience: function (l10n)
 	{
@@ -38,7 +38,7 @@ exports.listeners = {
 			}
 
 			this.setAttribute('experience', this.getAttribute('experience') + experience);
-		}
+		};
 	},
 	level: function (l10n)
 	{
@@ -70,7 +70,7 @@ exports.listeners = {
 					}
 				}
 			}
-		}
+		};
 	},
 	die: function (l10n)
 	{
@@ -81,6 +81,6 @@ exports.listeners = {
 			this.emit('regen');
 
 			this.setAttribute('experience', this.getAttribute('experience') - Math.ceil((this.getAttribute('experience') * 0.10)));
-		}
-	},
+		};
+	}
 };

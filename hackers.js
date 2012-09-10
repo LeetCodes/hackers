@@ -13,16 +13,13 @@
 
 
     // built-ins
-var net = require('net'),
-    util = require('util'),
-    express = require('express'),
+var util = require('util'),
 
     // local
     Commands = require('./src/commands').Commands,
     Rooms    = require('./src/rooms').Rooms,
     Npcs     = require('./src/npcs').Npcs,
     Items    = require('./src/items').Items,
-    Data     = require('./src/data').Data,
     Events   = require('./src/events').Events,
 	Plugins  = require('./src/plugins'),
     PlayerManager = require('./src/player_manager').PlayerManager,
@@ -51,9 +48,7 @@ var locale  = argv.locale || 'en',
 	server,
 	
 	// Stuff for the server executable
-	l10n,
-	respawnint,
-	saveint;
+	l10n;
 
 /**
  * Do the dirty work
@@ -179,7 +174,7 @@ function load(callback)
 			});
 			util.log("Done.");
 
-			util.log("Loading npcs...")
+			util.log("Loading npcs...");
 			npcs.load(verbose, function () {
 				util.log("Done.");
 
@@ -197,7 +192,7 @@ function load(callback)
 					callback(true);
 				}
 			});
-		})
+		});
 	});
 }
 
@@ -210,9 +205,10 @@ l10n = new Localize(require('js-yaml').load(require('fs').readFileSync(__dirname
  * Commands that the server executable itself accepts
  */
 var server_commands = {
-	/**
-	 * Hotboot, AKA do everything involved with a restart but keep players connected
-	 */
+    
+/**
+ * Hotboot, AKA do everything involved with a restart but keep players connected
+ */
 	hotboot : function (args)
 	{
 		args = args ? args.split(' ') : [];
@@ -241,9 +237,9 @@ var server_commands = {
 			init(false);
 		}, time);
 	},
-	/**
-	 * Hard restart: saves and disconnects all connected players
-	 */
+/**
+ * Hard restart: saves and disconnects all connected players
+ */
 	restart: function (args)
 	{
 		args = args ? args.split(' ') : [];
@@ -276,13 +272,7 @@ var server_commands = {
 		}, time);
 	}
 };
-//
-//process.on('SIGINT', function ()
-//{
-//	util.log("Shutting down - not so gracefully...");
-//	process.exit(0);
-//});
-//
+
 process.stdin.resume();
 process.stdin.on('data', function (data)
 {
@@ -296,4 +286,3 @@ process.stdin.on('data', function (data)
 
 	server_commands[command](data.split(' ').slice(1).join(' '));
 });
-// vim: set syn=javascript :

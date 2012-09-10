@@ -26,7 +26,7 @@ var Rooms = function () {
 				return;
 			}
 
-			for (i in files) {
+			for (var i in files) {
 				var file = rooms_dir + files[i];
 				if (!fs.statSync(file).isDirectory()) continue;
 
@@ -35,7 +35,7 @@ var Rooms = function () {
 
 				// Check for an area manifest
 				var has_manifest = false;
-				for (j in rooms) {
+				for (var j in rooms) {
 					if (rooms[j].match(/manifest.yml/)) {
 						has_manifest = true;
 						break;
@@ -46,9 +46,9 @@ var Rooms = function () {
 					log("\tFailed to load area - " + file + ' - No manifest');
 					return;
 				}
-
+                var manifest;
 				try {
-					var manifest = require('js-yaml').load(fs.readFileSync(file + '/manifest.yml').toString('utf8'));
+					manifest = require('js-yaml').load(fs.readFileSync(file + '/manifest.yml').toString('utf8'));
 				} catch (e) {
 					log("\tError loading area manifest for " + file + ' - ' + e.message);
 					return;
@@ -80,8 +80,9 @@ var Rooms = function () {
 					if (!room_file.match(/yml$/)) continue;
 
 					// parse the room files
+                    var room_def;
 					try {
-						var room_def = require('js-yaml').load(fs.readFileSync(room_file).toString('utf8'));
+						room_def = require('js-yaml').load(fs.readFileSync(room_file).toString('utf8'));
 					} catch (e) {
 						log("\t\tError loading room - " + room_file + ' - ' + e.message);
 						continue;
@@ -92,16 +93,16 @@ var Rooms = function () {
 						var room = room_def[vnum];
 						var validate = ['title', 'description', 'location'];
 
-						var err = false;
+						var err2 = false;
 						for (var v in validate) {
 							if (!(validate[v] in room)) {
 								log("\t\tError loading room in file " + room + ' - no ' + validate[v] + ' specified');
-								err = true;
+								err2 = true;
 								break;
 							}
 						}
 
-						if (err) {
+						if (err2) {
 							continue;
 						}
 
@@ -121,27 +122,26 @@ var Rooms = function () {
 		});
 	};
 
-	/**
-	 * Get a room at a specific location
-	 * @param int location
-	 * @return Room
-	 */
+/**
+ * Get a room at a specific location
+ * @param int location
+ * @return Room
+ */
 	self.getAt = function (location)
 	{
 		return location in self.rooms ? self.rooms[location] : false;
 	};
 
-	/**
-	 * Get an area
-	 * @param string area
-	 * @return object
-	 */
+/**
+ * Get an area
+ * @param string area
+ * @return object
+ */
 	self.getArea = function (area)
 	{
 		return area in self.areas ? self.areas[area] : false;
 	};
-
-}
+};
 
 var Room = function (config)
 {
@@ -178,11 +178,11 @@ var Room = function (config)
 	self.getItems = function () { return self.items; };
 	self.getNpcs = function () { return self.npcs; };
 
-	/**
-	 * Get the description, localized if possible
-	 * @param string locale
-	 * @return string
-	 */
+/**
+ * Get the description, localized if possible
+ * @param string locale
+ * @return string
+ */
 	self.getDescription = function (locale)
 	{
 		return typeof self.description === 'string' ?
@@ -190,24 +190,24 @@ var Room = function (config)
 			(locale in self.description ? self.description[locale] : 'UNTRANSLATED - Contact an admin');
 	};
 
-	/**
-	 * Get the title, localized if possible
-	 * @param string locale
-	 * @return string
-	 */
+/**
+ * Get the title, localized if possible
+ * @param string locale
+ * @return string
+ */
 	self.getTitle = function (locale)
 	{
 		return typeof self.title === 'string' ?
 			self.title :
 			(locale in self.title ? self.title[locale] : 'UNTRANSLATED - Contact an admin');
-	}
+	};
 
-	/**
-	 * Get the leave message for an exit, localized if possible
-	 * @param object exit
-	 * @param strign locale
-	 * @return string
-	 */
+/**
+ * Get the leave message for an exit, localized if possible
+ * @param object exit
+ * @param strign locale
+ * @return string
+ */
 	self.getLeaveMessage = function (exit, locale)
 	{
 		return typeof exit.leave_message === 'string' ?
@@ -215,66 +215,66 @@ var Room = function (config)
 			(locale in self.leave_message ? self.leave_message[locale] : 'UNTRANSLATED - Contact an admin');
 	};
 
-	/**
-	 * Add an item to the quicklookup array for items
-	 * @param string uid
-	 */
+/**
+ * Add an item to the quicklookup array for items
+ * @param string uid
+ */
 	self.addItem = function (uid)
 	{
-		self.items.push(uid)
+		self.items.push(uid);
 	};
 
-	/**
-	 * Remove an item from the room
-	 * @param string uid
-	 */
+/**
+ * Remove an item from the room
+ * @param string uid
+ */
 	self.removeItem = function (uid)
 	{
 		self.items = self.items.filter(function (i) { return i !== uid; });
 	};
 
-	/**
-	 * Add an npc to the quicklookup array for npcs
-	 * @param string uid
-	 */
+/**
+ * Add an npc to the quicklookup array for npcs
+ * @param string uid
+ */
 	self.addNpc = function (uid)
 	{
-		self.npcs.push(uid)
+		self.npcs.push(uid);
 	};
 
-	/**
-	 * Remove an npc from the room
-	 * @param string uid
-	 */
+/**
+ * Remove an npc from the room
+ * @param string uid
+ */
 	self.removeNpc = function (uid)
 	{
 		self.npcs = self.npcs.filter(function (i) { return i !== uid; });
 	};
 
-	/**
-	 * Check to see if an npc is in the room
-	 * @param string uid
-	 * @return boolean
-	 */
+/**
+ * Check to see if an npc is in the room
+ * @param string uid
+ * @return boolean
+ */
 	self.hasNpc = function (uid)
 	{
 		return self.npcs.some(function (i) { return i === uid; });
 	};
 
-	/**
-	 * Check to see if an npc is in the room
-	 * @param string uid
-	 * @return boolean
-	 */
+/**
+ * Check to see if an npc is in the room
+ * @param string uid
+ * @return boolean
+ */
 	self.hasItem = function (uid)
 	{
 		return self.items.some(function (i) { return i === uid; });
 	};
 
-	/**
-	 * Flatten into a simple structure
-	 * @return object
-	 */
+/**
+ * Flatten into a simple structure
+ * @return object
+ */
 	self.flatten = function ()
 	{
 		return {
@@ -286,10 +286,10 @@ var Room = function (config)
 		};
 	};
 
-	/**
-	 * Get a full object of the room
-	 * @return object
-	 */
+/**
+ * Get a full object of the room
+ * @return object
+ */
 	self.stringify = function ()
 	{
 		return {

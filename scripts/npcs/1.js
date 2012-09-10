@@ -7,13 +7,13 @@ exports.listeners = {
 			if (rand === 3) {
 				player.sayL10n(l10n, 'PLAYER_ENTER');
 			}
-		}
+		};
 	},
 	playerDropItem: function (l10n)
 	{
 		return function (room, player)
 		{
 			player.sayL10n(l10n, 'PLAYER_DROP');
-		}
-	},
+		};
+	}
 };

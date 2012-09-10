@@ -167,7 +167,7 @@ TelnetStream.prototype.telnetCommand = function (dodontwill, command)
   }
   var b = new Buffer(bytes);
   this.stream.write(b);
-}
+};
 
 function call_next_neg(telnet)
 {
@@ -195,7 +195,6 @@ function parse_env(telnet, buf)
   }
   var b = buf.slice(1);
   while (b.length) {
-    var t = b[i]; // type
     var i;
     var name = '';
     var value = null;
@@ -270,6 +269,7 @@ TelnetStream.prototype.processSB = function (buf)
         case OPT_TTYPE:
           this.term = pl.toString('ascii', 1);
           /* fall through */
+        break;
         default:
           this.emit('negotiated', this.neg_opt, pl);
       }
@@ -288,7 +288,7 @@ TelnetStream.prototype.processSB = function (buf)
   }
 
   throw new Error("need to buffer the buffer!");
-}
+};
 
 TelnetStream.prototype.processIncomingData = function (buf)
 {
@@ -378,6 +378,7 @@ TelnetStream.prototype.processIncomingData = function (buf)
             break;
           case OPT_BINARY:
             this.binary = true;
+            break;
             /* fall through */
           default:
             this.emit('will', opt);
@@ -391,8 +392,8 @@ TelnetStream.prototype.processIncomingData = function (buf)
         call_next_neg(this);
         break;
       case DO:
-        var opt = buf[i+2];
-        switch (opt) {
+        var opt2 = buf[i+2];
+        switch (opt2) {
           // telnet(1) sends DO OPT_TIMING_MARK after an interrupt
           case OPT_TIMING_MARK:
             /* pong! */
@@ -404,15 +405,15 @@ TelnetStream.prototype.processIncomingData = function (buf)
             this.telnetCommand(WILL, OPT_BINARY);
             break;
           default:
-            this.telnetCommand(WONT, opt);
-            this.emit('do', opt);
+            this.telnetCommand(WONT, opt2);
+            this.emit('do', opt2);
         }
         eat(3);
         break;
       case DONT:
-        var opt = buf[i+2];
-        this.emit('dont', opt);
-        this.telnetCommand(WONT, opt);
+        var opt3 = buf[i+2];
+        this.emit('dont', opt3);
+        this.telnetCommand(WONT, opt3);
         eat(3);
         break;
       default:
@@ -448,7 +449,7 @@ TelnetStream.prototype.attachStream = function (sock)
   sock.on('close', function () {
     telnet.emit('close');
   });
-}
+};
 
 function Server(connectionListener)
 {

@@ -8,7 +8,8 @@ var objects_dir = __dirname + '/../entities/objects/';
 var l10n_dir    = __dirname + '/../l10n/scripts/objects/';
 var objects_scripts_dir = __dirname + '/../scripts/objects/';
 
-var Items = function () {
+var Items = function ()
+{
 	var self = this;
 	self.objects = {};
 	self.load_count = {};
@@ -30,17 +31,19 @@ var Items = function () {
 		var debug = function (message) { if (verbose) util.debug(message); };
 
 		log("\tExamining object directory - " + objects_dir);
-		var objects = fs.readdir(objects_dir, function (err, files)
+        
+		fs.readdir(objects_dir, function (err, files)
 		{
 			// Load any object files
-			for (j in files) {
+			for (var j in files) {
 				var object_file = objects_dir + files[j];
 				if (!fs.statSync(object_file).isFile()) continue;
 				if (!object_file.match(/yml$/)) continue;
 
 				// parse the object files
+                var object_def;
 				try {
-					var object_def = require('js-yaml').load(fs.readFileSync(object_file).toString('utf8'));
+					object_def = require('js-yaml').load(fs.readFileSync(object_file).toString('utf8'));
 				} catch (e) {
 					log("\t\tError loading object - " + object_file + ' - ' + e.message);
 					continue;
@@ -83,10 +86,10 @@ var Items = function () {
 
 	};
 
-	/**
-	 * Add an item and generate a uuid if necessary
-	 * @param Item item
-	 */
+/**
+ * Add an item and generate a uuid if necessary
+ * @param Item item
+ */
 	self.addItem = function (item)
 	{
 		if (!item.getUuid()) {
@@ -96,11 +99,11 @@ var Items = function () {
 		self.load_count[item.vnum] = self.load_count[item.vnum] ? self.load_count[item.vnum] + 1 : 1;
 	};
 
-	/**
-	 * Gets all instance of an object
-	 * @param int vnum
-	 * @return Item
-	 */
+/**
+ * Gets all instance of an object
+ * @param int vnum
+ * @return Item
+ */
 	self.getByVnum = function (vnum)
 	{
 		var objs = [];
@@ -112,34 +115,34 @@ var Items = function () {
 		return objs;
 	};
 
-	/**
-	 * retreive an instance of an object by uuid
-	 * @param string uid
-	 * @return Item
-	 */
+/**
+ * retreive an instance of an object by uuid
+ * @param string uid
+ * @return Item
+ */
 	self.get = function (uid)
 	{
 		return self.objects[uid];
 	};
 
-	/**
-	 * proxy Array.each
-	 * @param function callback
-	 */
+/**
+ * proxy Array.each
+ * @param function callback
+ */
 	self.each = function (callback)
 	{
 		for (var obj in self.objects) {
 			callback(self.objects[obj]);
 		}
 	};
-}
+};
 
 var Item = function (config)
 {
 	var self = this;
 
 	self.keywords;
-	self.short_description
+	self.short_description;
 	self.description;
 	self.inventory;     // Player or Npc object that is holding it
 	self.npc_held;      // If it's in an inventory is it an NPC's?
@@ -169,9 +172,9 @@ var Item = function (config)
 		Data.loadListeners(config, l10n_dir, objects_scripts_dir, Data.loadBehaviors(config, 'objects/', self));
 	};
 
-	/**#@+
-	 * Mutators
-	 */
+/**#@+
+ * Mutators
+ */
 	self.getVnum      = function () { return self.vnum; };
 	self.getInv       = function () { return self.inventory; };
 	self.isNpcHeld    = function () { return self.npc_held; };
@@ -189,11 +192,11 @@ var Item = function (config)
 	self.setAttribute = function (attr, val)  { self.attributes[attr] = val; };
 	/**#@-*/
 
-	/**
-	 * Get the description, localized if possible
-	 * @param string locale
-	 * @return string
-	 */
+/**
+ * Get the description, localized if possible
+ * @param string locale
+ * @return string
+ */
 	self.getDescription = function (locale)
 	{
 		return typeof self.description === 'string' ?
@@ -201,11 +204,11 @@ var Item = function (config)
 			(locale in self.description ? self.description[locale] : 'UNTRANSLATED - Contact an admin');
 	};
 
-	/**
-	 * Get the title, localized if possible
-	 * @param string locale
-	 * @return string
-	 */
+/**
+ * Get the title, localized if possible
+ * @param string locale
+ * @return string
+ */
 	self.getShortDesc = function (locale)
 	{
 		return typeof self.short_description === 'string' ?
@@ -213,33 +216,33 @@ var Item = function (config)
 			(locale in self.short_description ? self.short_description[locale] : 'UNTRANSLATED - Contact an admin');
 	};
 
-	/**
-	 * Get the title, localized if possible
-	 * @param string locale
-	 * @return string
-	 */
+/**
+ * Get the title, localized if possible
+ * @param string locale
+ * @return string
+ */
 	self.getKeywords = function (locale)
 	{
 		return Array.isArray(self.keywords) ?
 			self.keywords :
 			(locale in self.keywords ? self.keywords[locale] : 'UNTRANSLATED - Contact an admin');
-	}
-
-	/**
-	 * check to see if an item has a specific keyword
-	 * @param string keyword
-	 * @param string locale
-	 * @return boolean
-	 */
-	self.hasKeyword = function (keyword, locale)
-	{
-		return self.getKeywords(locale).some(function (word) { return keyword === word });
 	};
 
-	/**
-	 * Used when saving a copy of an item to a player
-	 * @return object
-	 */
+/**
+ * check to see if an item has a specific keyword
+ * @param string keyword
+ * @param string locale
+ * @return boolean
+ */
+	self.hasKeyword = function (keyword, locale)
+	{
+		return self.getKeywords(locale).some(function (word) { return keyword === word; });
+	};
+
+/**
+ * Used when saving a copy of an item to a player
+ * @return object
+ */
 	self.flatten = function ()
 	{
 		return {
