@@ -53,7 +53,7 @@ exports.command = function (rooms, items, players, npcs, Commands)
 
 		// show all the items in the rom
 		room.getItems().forEach(function (id) {
-			player.say('<magenta>' + items.get(id).getShortDesc(player.getLocale()) + '</magenta>');
+			player.say('<b><magenta>' + items.get(id).getShortDesc(player.getLocale()) + '</magenta></b>');
 		});
 
 		// show all npcs in the room
@@ -72,16 +72,22 @@ exports.command = function (rooms, items, players, npcs, Commands)
 						color = 'green'
 						break;
 				}
-				player.say('<'+color+'>' + npcs.get(id).getShortDesc(player.getLocale()) + '</'+color+'>');
+				player.say('<b><'+color+'>' + npcs.get(id).getShortDesc(player.getLocale()) + '</'+color+'></b>');
 			}
 		});
 
 		player.write('[');
 		player.writeL10n(l10n, 'EXITS');
-		player.write(': ');
+		
+		c = ': <b><cyan>';
 		room.getExits().forEach(function (exit) {
-			player.write(exit.direction + ' ');
+			//player.write(exit.direction + ' ');
+			c += exit.direction + ' ';
 		});
-		player.say(']');
+		
+		//player.say('</cyan></b>]');
+		
+		c += '</cyan></b>]';
+		player.say(c);
 	}
 };

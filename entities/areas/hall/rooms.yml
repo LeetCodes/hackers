@@ -1,0 +1,20 @@
+--- 
+- 
+  area: hall
+  description: 
+    en: "You are in the hall room. You can visit the place with <b><green>look</green></b> and chat with other players using <b><green>say</green></b> and <b><green>chat</green></b> commands"
+    fr: "Vous êtes dans le hall du jeu. Vous pouvez regarder autour de vous avec la commande <b><green>look</green></b> et discuter avec d'autres joueurs ou modérateurs en utilisant les commandes <b><green>say</green></b> et <b><green>chat</green></b>"
+  exits: 
+    - 
+      direction: game
+      location: 2
+    - 
+      direction: news
+      location: 3
+    - 
+      direction: account
+      location: 4
+  location: 1
+  title: 
+    en: "Hall of the game"
+    fr: "Hall d'entrée"

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Main file, use this to run the server:
- * node ranvier [options]
+ * node hackers [options]
  *
  * Options:
  *   -v Verbose loggin

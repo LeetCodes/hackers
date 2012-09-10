@@ -96,7 +96,7 @@ var Events = {
 				break;
 			case 'login':
 				if (!dontwelcome) {
-					arg.write("Welcome, what is your name? ");
+					arg.write(L("WELCOME_UNKNOW"));
 				}
 
 				arg.once('data', function (name) {
@@ -300,14 +300,14 @@ var Events = {
 			switch (stage)
 			{
 			case 'check':
-				arg.write("That player doesn't exist, would you like to create it? [y/n] ");
+				arg.write(L("PLAYER_NOT_FOUND"));
 				arg.once('data', function (check) {
 					check = check.toString().trim().toLowerCase();
-					if (!/[yn]/.test(check)) {
+					if (!/[xv]/i.test(check)) {
 						return repeat();
 					}
 
-					if (check === 'n') {
+					if (check === 'x') {
 						arg.write("Goodbye!\r\n");
 						arg.end();
 						return false;
@@ -317,12 +317,12 @@ var Events = {
 				});
 				break;
 			case 'locale':
-				arg.write("What language would you like to play in? [English, Spanish] ");
+				arg.write("What language would you like to play in? [English, French] ");
 				arg.once('data', function (locale)
 				{
 					var locales = {
 						english: 'en',
-						spanish: 'es'
+						french: 'fr'
 					};
 					locale = locale.toString().trim().toLowerCase();
 					if (!(locale in locales)) {
@@ -339,7 +339,7 @@ var Events = {
 				arg.write(L('NAME_PROMPT'));
 				arg.getSocket().once('data', function (name) {
 					name = name.toString().trim();
-					if (/\W/.test(name)) {
+					if (/\W/.test(name) || name === '') {
 						arg.say(L('INVALID_NAME'));
 						return repeat();
 					}
@@ -376,23 +376,6 @@ var Events = {
 
 					// setPassword handles hashing
 					arg.setPassword(pass);
-					next(arg, 'class');
-				});
-				break;
-			case 'class':
-				var classes = {w: '[W]arrior'};
-				arg.sayL10n(l10n, 'CLASS_SELECT');
-				for (var r in classes) {
-					arg.say(classes[r]);
-				}
-				arg.getSocket().once('data', function (cls) {
-					cls = cls.toString().trim().toLowerCase();
-					var classes = {w: "warrior"};
-					if (!(cls in classes)) {
-						arg.sayL10n(l10n,'INVALID_CLASS');
-						return repeat();
-					}
-					arg.setAttribute('class', classes[cls]);
 					next(arg, 'done');
 				});
 				break;

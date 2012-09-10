@@ -1,12 +1,12 @@
 ITEM_NOT_FOUND:
     en: "You don't see that here."
-    es: "ES-You don't see that here."
+    fr: "L'objet n'est pas dans le coin."
 LIMBO:
     en: "You found yourself in limbo. How the heck did you manage that?"
-    es: "ES-You found yourself in limbo. How the heck did you manage that?"
+    fr: "FR-You found yourself in limbo. How the heck did you manage that?"
 IN_ROOM:
     en: "$[1] is here."
-    es: "ES-$[1] is here."
+    fr: "$[1] est ici."
 EXITS:
-    en: "Exits"
-    es: "ES-Exits"
+    en: "goto"
+    fr: "goto"

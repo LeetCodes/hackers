@@ -1,33 +1,33 @@
+WELCOME_UNKNOW:
+    en: "> Welcome, what is your hackers identifier ?"
+    fr: "> Bienvenue, quel est votre identifiant de connexion ?"
 WELCOME:
-    en: "<yellow>Welcome back, $[1]</yellow>"
-    es: "ES-Welcome back, $[1]"
+    en: "Welcome back, <b><yellow> $[1] </yellow></b>"
+    fr: "Bienvenue, <b><yellow>$[1]</yellow></b>"
 NAME_PROMPT:
-    en: "What is your character's name: "
-    es: "ES-What is your character's name: "
+    en: "> What is your character's name ?"
+    fr: "> Quel nom voulez-vous donner à votre personnage ?"
 INVALID_NAME:
     en: "Sorry, that's not a valid name."
-    es: "ES-Sorry, that's not a valid name."
+    fr: "Désolé, il ne s'agit pas d'un nom valide pour votre personnage."
 NAME_TAKEN:
     en: "Sorry, that name is taken."
-    es: "ES-Sorry, that name is taken."
+    fr: "Désolé, ce nom est déjà utilisé."
 PASSWORD:
-    en: "Password: "
-    es: "ES-Password: "
+    en: "> Password : "
+    fr: "> Mot de passe : "
 PASSWORD_FAIL:
     en: "Sorry, try again..."
-    es: "ES-Sorry, try again..."
+    fr: "Désolé, réessayez !"
 PASSWORD_EXCEEDED:
     en: "You have exceeded the maximum password attempts."
-    es: "ES-You have exceeded the maximum password attempts."
+    fr: "Vous avez dépassé le nombre d'essais maximum."
 PASSWORD_REPEAT:
-    en: "Repeat Password: "
-    es: "ES-Repeat Password: "
+    en: "> Repeat Password : "
+    fr: "> Confirmer : "
 EMPTY_PASS:
     en: "Well that's not very secure is it? Try again, champ."
-    es: "ES-Well that's not very secure is it? Try again, champ."
-CLASS_SELECT:
-    en: "What class would you like to play? "
-    es: "ES-What class would you like to play? "
-INVALID_CLASS:
-    en: "Sorry, that's not a valid class."
-    es: "ES-Sorry, that's not a valid class."
+    fr: "Hum.. pour un hacker, ce mot de passe n'est pas vraiment sécurisé ! Réessayez !"
+PLAYER_NOT_FOUND:
+    en: "That player doesn't exist, would you like to create a new one ? (x/V)"
+    fr: "Ce hacker n'existe pas. Voulez-vous créer un nouveau personnage ? (x/V)"
