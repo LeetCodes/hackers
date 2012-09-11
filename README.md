@@ -8,17 +8,22 @@ Using npm package manager :
 
 	npm install hackers
 	
-or after downloading or cloning the repo :
+or cloning the repository :
 
-	npm install ./
+	git clone git://github.com/robinouu/hackers
+	cd hackers
+	npm install
 
 ## Documentation ##
 
-Go to [the wiki](https://github.com/robinouu/hackers/wiki) to read how to launch the server properly and access to it.
+Available documentation can be found on the [wiki](https://github.com/robinouu/hackers/wiki) :
 
-## Licence ##
+  - [Starting the server](https://github.com/robinouu/hackers/wiki/Server) (there is **no public server** yet)
+  - [Using a client to sign in](https://github.com/robinouu/hackers/wiki/Client)
 
-hackers is distributed under the [BSD licence](https://github.com/robinouu/hackers/blob/master/LICENSE).
+## License ##
+
+hackers is distributed under the [BSD license](https://github.com/robinouu/hackers/blob/master/LICENSE).
 
 ## Feature requests ##
 
@@ -28,14 +33,8 @@ If you have some ideas, please [create an issue](https://github.com/robinouu/hac
 
 hackers depends on the following libraries :
 
-  - [colors](https://npmjs.org/package/colors)
-  
-  - [xregexp](https://npmjs.org/package/xregexp)
-  
-  - [mongodb](https://npmjs.org/package/mongodb) 
-  
-  - [iconv-lite](https://npmjs.org/package/iconv-lite) 
+  - [ranviermud](http://www.ranviermud.com/) by [shawncplus](https://github.com/shawncplus/)
     
-  - [mocha](https://npmjs.org/package/mocha)  (test framework)
+  - [mocha](https://npmjs.org/package/mocha)  (unit testing framework)
   
 Thanks to their respective authors for providing such a great tools !
