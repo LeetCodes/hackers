@@ -8,5 +8,5 @@ MOVE_COMBAT:
     en: "Where do you think you're going in the middle of a fight?"
     fr: "ES-Where do you think you're going in the middle of a fight?"
 LIMBO:
-    en: "This room does not exist anymore, or you can't access it."
-    fr: "Cette salle n'existe plus ou vous ne pouvez pas y accéder."
+    en: "You cannot access to this room."
+    fr: "Vous ne pouvez pas accéder à cette salle."

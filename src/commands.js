@@ -137,14 +137,14 @@ exports.Commands = Commands;
  */
 function move (exit, player)
 {
-	rooms.getAt(player.getLocation()).emit('playerLeave', player, players);
-
 	var room = rooms.getAt(exit.location);
 	if (!room)
 	{
 		player.sayL10n(l10n, 'LIMBO');
 		return;
 	}
+
+	rooms.getAt(player.getLocation()).emit('playerLeave', player, players);
 
 	// Send the room leave message
 	players.broadcastIf(exit.leave_message || L('LEAVE', player.getName()), function (p) {
