@@ -16,18 +16,18 @@
 var util = require('util');
 
 // local
-var Commands = require('../src/commands').Commands;
-var Rooms    = require('../src/rooms').Rooms;
-var Npcs     = require('../src/npcs').Npcs;
-var Items    = require('../src/items').Items;
-var Events   = require('../src/events').Events;
-var Plugins  = require('../src/plugins');
-var PlayerManager = require('../src/player_manager').PlayerManager;
+var Commands = require('../server/src/commands').Commands;
+var Rooms    = require('../server/src/rooms').Rooms;
+var Npcs     = require('../server/src/npcs').Npcs;
+var Items    = require('../server/src/items').Items;
+var Events   = require('../server/src/events').Events;
+var Plugins  = require('../server/src/plugins');
+var PlayerManager = require('../server/src/player_manager').PlayerManager;
 
 // third party
 var Localize  = require('localize');
 var argv = require('optimist').argv;
-var telnet = require('../src/3rdparty/telnet.js');
+var telnet = require('../server/src/3rdparty/telnet.js');
 
 /**
  * These aren't really globals, they're only "global" to this file,
@@ -201,7 +201,7 @@ function load(callback)
 
 // Not game stuff, this is for the server executable
 process.stdin.setEncoding('utf8');
-l10n = new Localize(require('js-yaml').load(require('fs').readFileSync(__dirname + '/../l10n/server.yml').toString('utf8')), undefined, 'zz');
+l10n = new Localize(require('js-yaml').load(require('fs').readFileSync(__dirname + '/../server/l10n/server.yml').toString('utf8')), undefined, 'zz');
 
 /**
  * Commands that the server executable itself accepts
