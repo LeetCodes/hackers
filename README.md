@@ -1,6 +1,6 @@
 # hackers #
 [![Build Status](https://secure.travis-ci.org/robinouu/hackers.png?branch=master)](http://travis-ci.org/robinouu/hackers)
-A MUD server and a client for a roleplay game in a futurist world
+A MUD server for a role-playing game in a futurist world
 
 ## Installation ##
 
@@ -24,6 +24,11 @@ Available documentation can be found on the [wiki](https://github.com/robinouu/h
 ## License ##
 
 hackers is distributed under the [BSD license](https://github.com/robinouu/hackers/blob/master/LICENSE).
+
+
+## Changelog ##
+
+The changelog can be seen here : https://github.com/robinouu/hackers/blob/master/CHANGELOG.md
 
 ## Feature requests ##
 
