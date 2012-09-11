@@ -2,12 +2,9 @@
 - 
   area: hall
   description: 
-    en: "You are in the hall room. You can visit the place with <b><green>look</green></b> and chat with other players using <b><green>say</green></b> and <b><green>chat</green></b> commands"
-    fr: "Vous êtes dans le hall du jeu. Vous pouvez regarder autour de vous avec la commande <b><green>look</green></b> et discuter avec d'autres joueurs ou modérateurs en utilisant les commandes <b><green>say</green></b> et <b><green>chat</green></b>"
+    en: "You are in the hall room. You can visit the place with <b><green>look</green></b> and chat with other players using <b><green>say</green></b> and <b><green>chat</green></b> commands, or navigate to the indicated <b><cyan>places</cyan></b>"
+    fr: "Vous êtes dans le hall du jeu. Vous pouvez regarder autour de vous avec la commande <b><green>look</green></b>, discuter avec d'autres joueurs ou modérateurs en utilisant les commandes <b><green>say</green></b> ou <b><green>chat</green></b> aller vers les <b><cyan>directions</cyan> indiquées."
   exits: 
-    - 
-      direction: game
-      location: 2
     - 
       direction: news
       location: 3
@@ -18,3 +15,35 @@
   title: 
     en: "Hall of the game"
     fr: "Hall d'entrée"
+- 
+  area: hall
+  description: 
+    en: ""
+    fr: ""
+  exits: 
+    - 
+      direction: hall
+      location: 1
+    - 
+      direction: account
+      location: 4
+  location: 3
+  title: 
+    en: "Hackers News"
+    fr: "Dernières mises à jour"
+- 
+  area: hall
+  description: 
+    en: "You can change your password using <b><green>set password</green> yourpass</b> command."
+    fr: "Vous pouvez modifier votre mot de passe avec la commande <b><green>set password</green> motdepasse</b>."
+  exits: 
+    - 
+      direction: hall
+      location: 1
+    - 
+      direction: news
+      location: 3
+  location: 4
+  title: 
+    en: "User account"
+    fr: "Compte utilisateur"
